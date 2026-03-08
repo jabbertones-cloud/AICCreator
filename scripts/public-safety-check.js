@@ -9,7 +9,12 @@ const patterns = [
   "tatsheen",
   "jamonwidit@",
   "plushtrap\\.com",
+  "plushtrap/",
   "Tatsheens-Mini",
+  "\\(408\\) 386-1907",
+  "408-386-1907",
+  "/Volumes/home/Storage",
+  "\\bScott\\b",
 ];
 
 const cmd = [

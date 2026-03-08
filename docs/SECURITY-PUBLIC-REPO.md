@@ -17,7 +17,7 @@ This repository must not expose personal machine details, local usernames, or pr
 Run before every push:
 
 ```bash
-rg -n '(/Users/|MacBook-Pro|tatsheen|jamonwidit@|plushtrap\\.com)' --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv-openclaw-tools/**'
+rg -n '(/Users/|MacBook-Pro|tatsheen|jamonwidit@|plushtrap\.com|plushtrap/|Tatsheens-Mini|\(408\) 386-1907|408-386-1907|/Volumes/home/Storage|\bScott\b)' --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv-openclaw-tools/**'
 ```
 
 The command should return no personal identifiers in tracked documentation or config.
