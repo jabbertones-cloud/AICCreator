@@ -172,6 +172,10 @@ async function publishInstagram(variant, videoPathOrUrl) {
   return { ok: true, external_id: publishJson.id, raw: publishJson };
 }
 
+/**
+ * TikTok draft: Use POST /v2/post/publish/inbox/video/init/ (video.upload scope)
+ * when AICC_TIKTOK_DRAFT=true and video URL is verified. Falls back to local drafts.
+ */
 async function publishTikTok(variant, videoPathOrUrl) {
   if (process.env.TIKTOK_PUBLISH_WEBHOOK) {
     const r = await postWebhook(process.env.TIKTOK_PUBLISH_WEBHOOK, {
@@ -199,29 +203,33 @@ async function publishTikTok(variant, videoPathOrUrl) {
     ? `${caption} 🛒 ${affiliateUrl}`.slice(0, 2200)
     : caption.slice(0, 2200);
 
-  const postInfo = {
-    post_info: {
-      title: variant.title.slice(0, 90),
-      caption: captionWithAffiliate,
-      privacy_level: process.env.AICC_TIKTOK_PRIVACY || "SELF_ONLY",
-      disable_duet: false,
-      disable_comment: false,
-      disable_stitch: false,
-      video_cover_timestamp_ms: 1000,
-    },
-    source_info: {
-      source: "PULL_FROM_URL",
-      video_url: videoPathOrUrl,
-    },
-  };
+  const useInboxDraft = process.env.AICC_TIKTOK_DRAFT === "true";
+  const endpoint = useInboxDraft
+    ? "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/"
+    : "https://open.tiktokapis.com/v2/post/publish/video/init/";
 
-  const res = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
+  const body = useInboxDraft
+    ? { source_info: { source: "PULL_FROM_URL", video_url: videoPathOrUrl } }
+    : {
+        post_info: {
+          title: variant.title.slice(0, 90),
+          caption: captionWithAffiliate,
+          privacy_level: process.env.AICC_TIKTOK_PRIVACY || "SELF_ONLY",
+          disable_duet: false,
+          disable_comment: false,
+          disable_stitch: false,
+          video_cover_timestamp_ms: 1000,
+        },
+        source_info: { source: "PULL_FROM_URL", video_url: videoPathOrUrl },
+      };
+
+  const res = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(postInfo),
+    body: JSON.stringify(body),
   });
 
   const json = await res.json();

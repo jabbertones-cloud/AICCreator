@@ -76,3 +76,53 @@ Replace `{topic}` via `--topic` flag or leave for manual fill.
 - `manifest.json` — caption, hashtags, hook, title
 - `*.mp4` — video (if available)
 - Human: add trending music, post natively
+
+## Mobile App Monetization from Content Traffic
+
+**Flow (Oliver Henry pattern):** Content → Traffic → App → Revenue
+
+| Step | Action | Tools |
+|------|--------|-------|
+| 1 | Create viral content (slideshows, hooks) | aicc-campaign-engine, carousel-gen |
+| 2 | Publish to TikTok/Reels/Shorts | aicc-autopublish (draft or live) |
+| 3 | Direct viewers to app (bio link, CTA) | TIKTOK_SHOP_AFFILIATE_URL, affiliate CTA |
+| 4 | App monetization (subscription, IAP, ads) | Mobile app (external) |
+
+**Env:** `TIKTOK_SHOP_AFFILIATE_URL` — UTM-tagged link in caption for app/shop.
+**CTA templates:** "Link in bio", "Tap for the full workflow", "Download the app".
+
+## TikTok Hook Analytics
+
+Export TikTok post analytics (views, likes, caption) to JSON. See `data/tiktok-analytics-export.json.example` for format.
+```bash
+cp data/tiktok-analytics-export.json.example reports/tiktok-analytics-export.json
+# Edit reports/tiktok-analytics-export.json with your data
+node scripts/tiktok-hook-analytics.js --input reports/tiktok-analytics-export.json --update-library
+```
+Ranks hooks by viral score, updates hook-library.json for reuse.
+
+## Hook Library → Campaign
+
+```bash
+node scripts/hook-library-to-campaign.js --to-hooks-txt --to-campaign --topic "AI tools"
+```
+Exports hook-library to hooks.txt and runs text-hooks-batch.
+
+## Larry-Style Automation
+
+```bash
+node scripts/larry-autopublish-agent.js schedule   # Fill queue
+node scripts/larry-autopublish-agent.js run        # Process due
+```
+Run via cron or PM2 for continuous posting.
+
+## Video Assembly (Slides → Reels/Shorts)
+
+```bash
+node scripts/slides-to-video.js --manifest reports/carousel-manifest-latest.json --variant-id <uuid>
+```
+Assembles carousel slides into vertical video with ffmpeg.
+
+## TikTok API Draft Upload
+
+TikTok Content Posting API supports draft via **Upload to Inbox**: `POST /v2/post/publish/inbox/video/init/` (requires `video.upload` scope). Video goes to creator's TikTok app inbox for human to add music and publish. Set `AICC_TIKTOK_DRAFT=true` and use verified video URL. Default: local `outputs/drafts/` for maximum compatibility.
