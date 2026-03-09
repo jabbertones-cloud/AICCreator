@@ -1,0 +1,12 @@
+# Text hooks for batch content (one per line)
+# Replace {topic} via --topic flag or manually
+# Usage: npm run aicc:hooks-batch
+
+Most creators miss this {topic} shift until it's too late.
+This {topic} update quietly changed the game today.
+If you're building with AI, this {topic} move matters now.
+The secret to {topic} nobody talks about.
+This {topic} discovery changes everything.
+What {topic} experts won't tell you.
+Nobody's talking about this {topic} hack.
+This {topic} method is way too simple.

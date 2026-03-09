@@ -5,9 +5,14 @@
  * aicc-autopublish.js
  * Scheduler + publish adapters for YouTube/TikTok/Instagram.
  *
+ * Draft-first human-finalize: Use --draft or publish_mode: "draft" to output to
+ * outputs/drafts/ for human to add trending music on phone and post natively.
+ * Higher virality: bot creates draft → human finalizes on device.
+ *
  * Commands:
- *   node scripts/aicc-autopublish.js schedule --campaign reports/aicc-campaign-latest.json --platforms youtube,tiktok,instagram --start-at 2026-03-05T18:00:00Z --spacing-min 120
- *   node scripts/aicc-autopublish.js run-due
+ *   node scripts/aicc-autopublish.js schedule --campaign reports/aicc-campaign-latest.json [--draft] [--platforms youtube,tiktok,instagram]
+ *   node scripts/aicc-autopublish.js draft --campaign reports/aicc-campaign-latest.json [--platforms tiktok,instagram] [--video path]
+ *   node scripts/aicc-autopublish.js run-due [--dry-run]
  *   node scripts/aicc-autopublish.js publish-now --campaign reports/aicc-campaign-latest.json --variant-id <uuid> --platform youtube
  */
 
@@ -24,8 +29,11 @@ try {
 const ROOT = path.join(__dirname, "..");
 const DATA = path.join(ROOT, "data");
 const REPORTS = path.join(ROOT, "reports");
+const OUTPUTS = path.join(ROOT, "outputs");
+const DRAFTS_DIR = path.join(OUTPUTS, "drafts");
 const QUEUE_FILE = path.join(DATA, "aicc-publish-queue.json");
 const RESULT_FILE = path.join(REPORTS, "aicc-publish-results-latest.json");
+const CLIP_MANIFEST_PATH = path.join(REPORTS, "clip-manifest-latest.json");
 
 function arg(flag, fallback = null) {
   const i = process.argv.indexOf(flag);
@@ -182,9 +190,19 @@ async function publishTikTok(variant, videoPathOrUrl) {
     return { ok: false, error: "TikTok API mode requires a public video URL." };
   }
 
+  // Build caption with optional affiliate link
+  const caption = variant.hook || variant.title;
+  const affiliateUrl = process.env.TIKTOK_SHOP_AFFILIATE_URL
+    ? `${process.env.TIKTOK_SHOP_AFFILIATE_URL}?utm_source=tiktok&utm_campaign=${variant.id || "aicc"}`
+    : "";
+  const captionWithAffiliate = affiliateUrl
+    ? `${caption} 🛒 ${affiliateUrl}`.slice(0, 2200)
+    : caption.slice(0, 2200);
+
   const postInfo = {
     post_info: {
       title: variant.title.slice(0, 90),
+      caption: captionWithAffiliate,
       privacy_level: process.env.AICC_TIKTOK_PRIVACY || "SELF_ONLY",
       disable_duet: false,
       disable_comment: false,
@@ -214,18 +232,125 @@ async function publishTikTok(variant, videoPathOrUrl) {
   return { ok: true, external_id: json?.data?.publish_id || json?.data?.task_id || null, raw: json };
 }
 
-async function dispatch(item, dryRun = false) {
+/**
+ * Publish to Pinterest using their API or webhook
+ */
+async function publishPinterest(variant, imageUrlOrPath) {
+  if (process.env.PINTEREST_PUBLISH_WEBHOOK) {
+    const r = await postWebhook(process.env.PINTEREST_PUBLISH_WEBHOOK, {
+      platform: "pinterest",
+      variant,
+      image: imageUrlOrPath,
+    });
+    return { ok: r.ok, external_id: `pin:webhook:${r.status}`, raw: r.body };
+  }
+
+  const token = process.env.PINTEREST_ACCESS_TOKEN;
+  if (!token) {
+    return { ok: false, error: "Pinterest credentials missing (set PINTEREST_ACCESS_TOKEN or PINTEREST_PUBLISH_WEBHOOK)." };
+  }
+
+  const affiliateUrl = process.env.PINTEREST_AFFILIATE_URL || process.env.TIKTOK_SHOP_AFFILIATE_URL || null;
+  const pinData = {
+    board_id: process.env.PINTEREST_BOARD_ID || "",
+    title: (variant.title || "").slice(0, 100),
+    description: (variant.hook || variant.description || "").slice(0, 500),
+    link: affiliateUrl || undefined,
+    media_source: imageUrlOrPath && /^https?:\/\//i.test(imageUrlOrPath)
+      ? { source_type: "image_url", url: imageUrlOrPath }
+      : { source_type: "image_base64", content_type: "image/jpeg", data: "" },
+  };
+
+  const res = await fetch("https://api.pinterest.com/v5/pins", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(pinData),
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    return { ok: false, error: `Pinterest pin failed: ${JSON.stringify(json)}` };
+  }
+
+  return { ok: true, external_id: json?.id || null, raw: json };
+}
+
+function resolveVideoForVariant(variant, videoAsset) {
+  if (videoAsset && videoAsset.trim()) return path.resolve(videoAsset.trim());
+  if (!fs.existsSync(CLIP_MANIFEST_PATH)) return null;
+  try {
+    const clipData = JSON.parse(fs.readFileSync(CLIP_MANIFEST_PATH, "utf8"));
+    const clips = Array.isArray(clipData) ? clipData : clipData.clips || [];
+    const entry = clips.find((c) => c.variant_id === variant?.id && c.ok && c.path);
+    return entry ? path.resolve(entry.path) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Draft-first human-finalize: Write to outputs/drafts/<platform>/ for human to
+ * add trending music on phone and post natively. Higher virality.
+ */
+function writeDraftManifest(item, videoPath) {
+  const { platform, payload } = item;
+  const variant = payload?.variant || {};
+  const draftDir = path.join(DRAFTS_DIR, platform, `${variant.id || randomUUID()}`);
+  fs.mkdirSync(draftDir, { recursive: true });
+
+  const manifest = {
+    created_at: new Date().toISOString(),
+    platform,
+    variant_id: variant.id,
+    title: variant.title || "",
+    hook: variant.hook || variant.title || "",
+    description: variant.description || "",
+    hashtags: variant.hashtags || [],
+    cta: variant.cta || "",
+    caption: variant.hook || variant.title || "",
+    video_path: videoPath ? path.relative(draftDir, videoPath) : null,
+    human_finalize: "Add trending music on phone, then post natively for higher virality.",
+  };
+
+  const manifestPath = path.join(draftDir, "manifest.json");
+  writeJson(manifestPath, manifest);
+
+  if (videoPath && fs.existsSync(videoPath)) {
+    const destVideo = path.join(draftDir, path.basename(videoPath));
+    try {
+      fs.copyFileSync(videoPath, destVideo);
+      manifest.video_path = path.basename(videoPath);
+    } catch (e) {
+      manifest.video_path = videoPath;
+      manifest.video_note = "Copy video manually from: " + videoPath;
+    }
+    writeJson(manifestPath, manifest);
+  }
+
+  return { ok: true, external_id: `draft:${draftDir}`, draft_dir: draftDir };
+}
+
+async function dispatch(item, dryRun = false, draftMode = false) {
   const payload = item.payload || {};
   const variant = payload.variant;
-  const video = payload.video_asset;
+  const video = resolveVideoForVariant(variant, payload.video_asset) || payload.video_asset;
+  const wantDraft = draftMode || variant?.publish_mode === "draft";
 
   if (dryRun) {
     return { ok: true, external_id: `dry:${item.platform}:${item.id}` };
   }
 
+  if (wantDraft) {
+    return writeDraftManifest(item, video);
+  }
+
   if (item.platform === "youtube") return publishYouTube(variant, video);
   if (item.platform === "instagram") return publishInstagram(variant, video);
   if (item.platform === "tiktok") return publishTikTok(variant, video);
+  if (item.platform === "pinterest") return publishPinterest(variant, video);
   return { ok: false, error: `Unsupported platform: ${item.platform}` };
 }
 
@@ -235,20 +360,51 @@ function ensureQueue() {
   return q;
 }
 
-function addToQueue(entries) {
-  const q = ensureQueue();
+function addToQueue(entries, replace = false) {
+  const q = replace ? { items: [] } : ensureQueue();
   q.items.push(...entries);
   writeJson(QUEUE_FILE, q);
   return entries.length;
 }
 
-function makeScheduleEntries({ campaign, platforms, startAt, spacingMin, videoAsset }) {
+/**
+ * Resolve video path per variant: from clip manifest when available, else use single videoAsset.
+ * @param {object[]} variants - Campaign variants
+ * @param {string} videoAsset - Optional single path for all (legacy --video)
+ * @returns {Map<string, string>} variant_id -> absolute video path
+ */
+function resolveVideoPaths(variants, videoAsset) {
+  const map = new Map();
+  if (videoAsset && videoAsset.trim()) {
+    for (const v of variants) {
+      map.set(v.id, path.resolve(videoAsset.trim()));
+    }
+    return map;
+  }
+  if (!fs.existsSync(CLIP_MANIFEST_PATH)) return map;
+  try {
+    const clipData = JSON.parse(fs.readFileSync(CLIP_MANIFEST_PATH, "utf8"));
+    const clips = Array.isArray(clipData) ? clipData : clipData.clips || [];
+    for (const entry of clips) {
+      if (entry.ok && entry.path && entry.variant_id) {
+        map.set(entry.variant_id, path.resolve(entry.path));
+      }
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return map;
+}
+
+function makeScheduleEntries({ campaign, platforms, startAt, spacingMin, videoAsset, videoPaths, draftMode = false }) {
   const baseTs = startAt ? new Date(startAt).getTime() : Date.now() + 60_000;
   if (!Number.isFinite(baseTs)) throw new Error(`Invalid --start-at: ${startAt}`);
 
   const entries = [];
   let offset = 0;
   for (const variant of campaign.variants) {
+    const pathForVariant = videoPaths?.get(variant.id) || videoAsset || "";
+    const v = draftMode ? { ...variant, publish_mode: "draft" } : variant;
     for (const platform of platforms) {
       entries.push({
         id: randomUUID(),
@@ -258,8 +414,8 @@ function makeScheduleEntries({ campaign, platforms, startAt, spacingMin, videoAs
         platform,
         payload: {
           campaign_topic: campaign.topic,
-          variant,
-          video_asset: videoAsset,
+          variant: v,
+          video_asset: pathForVariant,
         },
       });
       offset += spacingMin;
@@ -270,18 +426,22 @@ function makeScheduleEntries({ campaign, platforms, startAt, spacingMin, videoAs
 
 async function cmdSchedule() {
   const campaignFile = arg("--campaign", path.join(REPORTS, "aicc-campaign-latest.json"));
+  const validPlatforms = ["youtube", "tiktok", "instagram", "pinterest"];
   const platforms = (arg("--platforms", "youtube,tiktok,instagram") || "")
     .split(",")
     .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
+    .filter((p) => validPlatforms.includes(p));
   const startAt = arg("--start-at", null);
   const spacingMin = Math.max(5, Number(arg("--spacing-min", "90")) || 90);
   const videoAsset = arg("--video", process.env.AICC_VIDEO_ASSET || "");
+  const draftMode = has("--draft") || false;
 
   const campaign = loadCampaign(campaignFile);
-  const entries = makeScheduleEntries({ campaign, platforms, startAt, spacingMin, videoAsset });
-  const n = addToQueue(entries);
-  console.log(`[aicc-autopublish] scheduled ${n} publish jobs`);
+  const videoPaths = resolveVideoPaths(campaign.variants, videoAsset);
+  const entries = makeScheduleEntries({ campaign, platforms, startAt, spacingMin, videoAsset, videoPaths, draftMode });
+  const replace = has("--replace");
+  const n = addToQueue(entries, replace);
+  console.log(`[aicc-autopublish] scheduled ${n} publish jobs${draftMode ? " (draft mode)" : ""}`);
   console.log(`[aicc-autopublish] queue file: ${QUEUE_FILE}`);
 }
 
@@ -300,7 +460,7 @@ async function cmdRunDue() {
     item.started_at = new Date().toISOString();
 
     try {
-      const out = await dispatch(item, dryRun);
+      const out = await dispatch(item, dryRun, item.payload?.variant?.publish_mode === "draft");
       if (out.ok) {
         item.status = "published";
         item.external_id = out.external_id || null;
@@ -330,6 +490,53 @@ async function cmdRunDue() {
   console.log(`[aicc-autopublish] results: ${RESULT_FILE}`);
 }
 
+async function cmdDraft() {
+  const campaignFile = arg("--campaign", path.join(REPORTS, "aicc-campaign-latest.json"));
+  const validPlatforms = ["youtube", "tiktok", "instagram", "pinterest"];
+  const platforms = (arg("--platforms", "tiktok,instagram") || "tiktok,instagram")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter((p) => validPlatforms.includes(p));
+  const videoAsset = arg("--video", process.env.AICC_VIDEO_ASSET || "");
+
+  const campaign = loadCampaign(campaignFile);
+  const videoPaths = resolveVideoPaths(campaign.variants, videoAsset);
+
+  fs.mkdirSync(DRAFTS_DIR, { recursive: true });
+  const results = [];
+
+  for (const variant of campaign.variants) {
+    const pathForVariant = videoPaths?.get(variant.id) || videoAsset || "";
+    for (const platform of platforms) {
+      const item = {
+        id: randomUUID(),
+        platform,
+        payload: {
+          campaign_topic: campaign.topic,
+          variant: { ...variant, publish_mode: "draft" },
+          video_asset: pathForVariant,
+        },
+      };
+      const out = await dispatch(item, false, true);
+      if (out.ok) {
+        results.push({ variant_id: variant.id, platform, draft_dir: out.draft_dir || out.external_id });
+        console.log(`[aicc-autopublish] draft: ${out.draft_dir || out.external_id}`);
+      } else {
+        results.push({ variant_id: variant.id, platform, error: out.error });
+        console.error(`[aicc-autopublish] failed: ${out.error}`);
+      }
+    }
+  }
+
+  writeJson(path.join(REPORTS, "aicc-drafts-latest.json"), {
+    generated_at: new Date().toISOString(),
+    drafts_dir: DRAFTS_DIR,
+    results,
+  });
+  console.log(`[aicc-autopublish] ${results.filter((r) => r.draft_dir).length} drafts written to ${DRAFTS_DIR}`);
+  console.log("[aicc-autopublish] Human: add trending music on phone, then post natively for higher virality.");
+}
+
 async function cmdPublishNow() {
   const campaignFile = arg("--campaign", path.join(REPORTS, "aicc-campaign-latest.json"));
   const variantId = arg("--variant-id", null);
@@ -343,7 +550,12 @@ async function cmdPublishNow() {
   const variant = campaign.variants.find((v) => v.id === variantId);
   if (!variant) throw new Error(`variant not found: ${variantId}`);
 
-  const out = await dispatch({ id: randomUUID(), platform, payload: { variant, video_asset: videoAsset } }, dryRun);
+  const draftMode = has("--draft");
+  const out = await dispatch(
+    { id: randomUUID(), platform, payload: { variant: draftMode ? { ...variant, publish_mode: "draft" } : variant, video_asset: videoAsset } },
+    dryRun,
+    draftMode
+  );
   if (!out.ok) throw new Error(out.error || "publish failed");
 
   console.log(`[aicc-autopublish] published variant ${variantId} to ${platform}`);
@@ -353,13 +565,16 @@ async function cmdPublishNow() {
 async function main() {
   const cmd = process.argv[2] || "help";
   if (cmd === "schedule") return cmdSchedule();
+  if (cmd === "draft") return cmdDraft();
   if (cmd === "run-due") return cmdRunDue();
   if (cmd === "publish-now") return cmdPublishNow();
 
   console.log("Usage:");
-  console.log("  node scripts/aicc-autopublish.js schedule --campaign reports/aicc-campaign-latest.json --platforms youtube,tiktok,instagram --start-at 2026-03-05T18:00:00Z --spacing-min 120 --video /abs/path/final.mp4");
+  console.log("  node scripts/aicc-autopublish.js schedule --campaign reports/aicc-campaign-latest.json [--draft] [--platforms youtube,tiktok,instagram] [--spacing-min 120] [--video /path/final.mp4] [--replace]");
+  console.log("  node scripts/aicc-autopublish.js draft --campaign reports/aicc-campaign-latest.json [--platforms tiktok,instagram] [--video /path/final.mp4]");
+  console.log("    (draft: output to outputs/drafts/ for human to add trending music on phone → higher virality)");
   console.log("  node scripts/aicc-autopublish.js run-due [--dry-run]");
-  console.log("  node scripts/aicc-autopublish.js publish-now --campaign reports/aicc-campaign-latest.json --variant-id <uuid> --platform youtube --video /abs/path/final.mp4 [--dry-run]");
+  console.log("  node scripts/aicc-autopublish.js publish-now --campaign reports/aicc-campaign-latest.json --variant-id <uuid> --platform youtube [--video /path/final.mp4] [--dry-run] [--draft]");
 }
 
 main().catch((err) => {

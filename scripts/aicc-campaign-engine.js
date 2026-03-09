@@ -58,6 +58,76 @@ const NICHE_PACKS = {
     ],
     affiliateCta: "Use code CREATOR for partner-tool discount in bio.",
   },
+  "ai-tools-review": {
+    angle: "AI tool comparison and review",
+    hookTemplates: [
+      "I tested 5 AI tools for {topic} so you don't have to.",
+      "This AI tool for {topic} is lowkey underrated.",
+      "The best free AI tool for {topic} in 2026.",
+    ],
+    ctaTemplates: [
+      "Comment 'tools' for the full comparison list.",
+      "Links to all tools in bio.",
+      "Follow for weekly AI tool reviews.",
+    ],
+    affiliateCta: "Get the AI tools comparison sheet free in bio.",
+  },
+  "youtube-faceless": {
+    angle: "faceless YouTube growth",
+    hookTemplates: [
+      "This faceless YouTube channel makes $10k/mo with {topic}.",
+      "How I'd start a {topic} faceless channel today with AI.",
+      "The {topic} niche is perfect for a faceless YouTube channel.",
+    ],
+    ctaTemplates: [
+      "Subscribe for the full faceless channel blueprint.",
+      "Comment 'faceless' for the channel setup checklist.",
+      "Download the faceless YouTube template in bio.",
+    ],
+    affiliateCta: "Start your faceless channel with the toolkit in bio.",
+  },
+  "tiktok-slideshow": {
+    angle: "TikTok slideshow hook+demo format (Oliver Henry pattern)",
+    hookTemplates: [
+      "This {topic} slideshow format is pulling millions of views.",
+      "Text hook + demo combo: the fastest {topic} viral formula.",
+      "Most creators don't know this {topic} slideshow trick exists.",
+    ],
+    ctaTemplates: [
+      "Save this and use it in your next upload.",
+      "Comment 'template' and I'll drop the framework.",
+      "Follow for more slideshow growth systems.",
+    ],
+    affiliateCta: "Download the slideshow template pack in bio.",
+  },
+  "hook-demo": {
+    angle: "hook + demo combination (text file → script combines)",
+    hookTemplates: [
+      "I wrote all my {topic} hooks in a text file, then a script combined them.",
+      "This {topic} hook plus demo format went viral.",
+      "The {topic} hook+demo combo that gets retention.",
+    ],
+    ctaTemplates: [
+      "Comment 'hooks' for the batch workflow.",
+      "Save this for your next content batch.",
+      "Follow for the hook+demo automation setup.",
+    ],
+    affiliateCta: "Get the hook batch script in bio.",
+  },
+  "tiktok-affiliate": {
+    angle: "TikTok affiliate marketing",
+    hookTemplates: [
+      "This TikTok affiliate method for {topic} prints commissions.",
+      "The fastest way to earn with {topic} affiliate on TikTok.",
+      "I made my first $1k with {topic} using this TikTok method.",
+    ],
+    ctaTemplates: [
+      "Tap the link for the affiliate product setup guide.",
+      "Comment 'affiliate' for the commission blueprint.",
+      "Follow for daily affiliate strategy breakdowns.",
+    ],
+    affiliateCta: "Join the affiliate program through the bio link.",
+  },
 };
 
 function arg(flag, fallback = null) {
@@ -158,8 +228,19 @@ function main() {
   const durationSec = Math.max(15, Math.min(90, numArg("--duration-sec", 38)));
   const out = arg("--out", path.join(REPORTS, "aicc-campaign-latest.json"));
   const runResearch = process.argv.includes("--run-research");
+  const hookType = arg("--hook-type", null); // curiosity | urgency | social_proof | pain | benefit | pattern_interrupt
 
   const pack = NICHE_PACKS[niche] || NICHE_PACKS["ai-clone-news"];
+
+  // Load affiliate links config
+  let affiliateLinksConfig = {};
+  try {
+    affiliateLinksConfig = JSON.parse(fs.readFileSync(path.join(ROOT, "config/affiliate-links.json"), "utf8"));
+  } catch (_) {}
+
+  function getAffiliateUrl(platform, nicheKey) {
+    return affiliateLinksConfig?.platforms?.[platform]?.[nicheKey] || pack.affiliateCta;
+  }
 
   if (runResearch) {
     run("node", [path.join(ROOT, "scripts", "builder-research-agenda.js"), "--rolling"]);
@@ -171,9 +252,31 @@ function main() {
   const transcript = extractTranscriptText(indexJson);
   const keywords = topKeywords(`${topic}\n${transcript}`, 10);
 
+  // Load hook library if specified
+  let hookLibrary = null;
+  if (hookType) {
+    const hookLibraryPath = path.join(ROOT, "data/hook-library.json");
+    if (fs.existsSync(hookLibraryPath)) {
+      try {
+        hookLibrary = readJsonSafe(hookLibraryPath, null);
+      } catch (_) {}
+    }
+  }
+
   const variants = [];
   for (let i = 0; i < variantsCount; i++) {
-    const hook = pack.hookTemplates[i % pack.hookTemplates.length].replace("{topic}", topic);
+    let hook;
+    if (hookType && hookLibrary && hookLibrary[hookType]) {
+      const libraryHooks = hookLibrary[hookType];
+      if (Array.isArray(libraryHooks) && libraryHooks.length > 0) {
+        hook = libraryHooks[i % libraryHooks.length].replace("{topic}", topic);
+      } else {
+        hook = pack.hookTemplates[i % pack.hookTemplates.length].replace("{topic}", topic);
+      }
+    } else {
+      hook = pack.hookTemplates[i % pack.hookTemplates.length].replace("{topic}", topic);
+    }
+
     const cta = pack.ctaTemplates[i % pack.ctaTemplates.length];
     const body = [
       `Problem: creators waste time on disconnected tooling for ${topic}.`,
@@ -201,7 +304,12 @@ function main() {
       description,
       hashtags: hashTags(topic, niche),
       thumbnail_prompt: `High contrast thumbnail about ${topic}, bold 3-word hook, red/yellow accents, no clutter`,
-      affiliate_cta_block: pack.affiliateCta,
+      affiliate_cta_block: {
+        tiktok: getAffiliateUrl("tiktok", niche),
+        instagram: getAffiliateUrl("instagram", niche),
+        youtube: getAffiliateUrl("youtube", niche),
+        pinterest: getAffiliateUrl("pinterest", niche),
+      },
       voice: {
         provider: process.env.AICC_TTS_PROVIDER || "local",
         voice_id: process.env.AICC_TTS_VOICE || "default",
