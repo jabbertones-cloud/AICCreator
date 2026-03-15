@@ -4,7 +4,7 @@ description: Rules for working on PayClaw repo or PayClaw-related tasks. Claw-ar
 
 # PayClaw Overseer Rules
 
-When working on the **PayClaw** repo (https://github.com/smanthey/payclaw) or any PayClaw-related task, agents and creators **must** follow these rules.
+When working on the **PayClaw** repo (https://github.com/jamonwidit/payclaw) or any PayClaw-related task, agents and creators **must** follow these rules.
 
 ## Source: AutopayAgent (autopay_ui)
 
@@ -41,4 +41,4 @@ PayClaw is essentially a version of the **AutopayAgent** system (repo: **autopay
 ## Orientation
 
 - PayClaw project context and how the swarm researches/manages/updates: see **docs/payclaw/CONTEXT.md** in claw-architect.
-- Repo: https://github.com/smanthey/payclaw. Creators build the product there; claw-architect provides rules, compliance, and overseer swarm.
+- Repo: https://github.com/jamonwidit/payclaw. Creators build the product there; claw-architect provides rules, compliance, and overseer swarm.

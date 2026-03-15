@@ -3,7 +3,7 @@
 **Canonical build specification for creators and the PayClaw swarm.**  
 Source: OpenClaw overseer. Do not invent features outside this spec.
 
-**Code source:** The **autopay_ui** repo (https://github.com/smanthey/autopay_ui) has most of what PayClaw needs — Stripe, Telnyx, webhooks, message flow. Copy and adapt from `~/claw-repos/autopay_ui`; may need cleanup (single-tenant, desktop-only). See `docs/SOURCES.md`.
+**Code source:** The **autopay_ui** repo (https://github.com/jamonwidit/autopay_ui) has most of what PayClaw needs — Stripe, Telnyx, webhooks, message flow. Copy and adapt from `~/claw-repos/autopay_ui`; may need cleanup (single-tenant, desktop-only). See `docs/SOURCES.md`.
 
 ---
 

@@ -47,7 +47,7 @@ const CHECKOUT_CUSTOM_TEXT =
   "Shipping: In-stock inventory ships within 2 business days; delivered in 5–8 business days via standard ground. " +
   "Payment: Secure card payment via Stripe — no net terms on first order. " +
   "Returns: Wellness consumables are non-returnable. Damaged or incorrect shipments are replaced at no charge — contact shop@skynpatch.com within 7 days. " +
-  "Volume pricing available on multi-case orders. Contact shop@skynpatch.com or (408) 386-1907.";
+  "Volume pricing available on multi-case orders. Contact shop@skynpatch.com or (xxx) xxx-xxxx.";
 
 // ── Stripe helper ─────────────────────────────────────────────────────────
 

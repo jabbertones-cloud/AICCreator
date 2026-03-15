@@ -4,9 +4,9 @@
 
 ## Repo and product
 
-- **PayClaw repo:** https://github.com/smanthey/payclaw  
+- **PayClaw repo:** https://github.com/jamonwidit/payclaw  
 - **Product:** PayClaw Lite — subscription-based macOS desktop app (DMG) for invoice payment collection via email and SMS. Users supply debtor lists, amounts, due dates; system handles outreach and payment processing. **Not** debt collection; invoices under 45 days only.
-- **Source system:** PayClaw is essentially a version of **AutopayAgent** (repo **autopay_ui**). The autopay_ui repo has **most of what PayClaw needs** — Stripe checkout & webhooks, Telnyx SMS, signature verification, message flow, dashboard. It may need cleanup (remove multi-tenant auth, simplify to single-tenant desktop), but the core is there. Repo: https://github.com/smanthey/autopay_ui ; local path: `~/claw-repos/autopay_ui`. **Copy and adapt; do not rebuild from scratch.** See `docs/SOURCES.md` for exact files and paths.
+- **Source system:** PayClaw is essentially a version of **AutopayAgent** (repo **autopay_ui**). The autopay_ui repo has **most of what PayClaw needs** — Stripe checkout & webhooks, Telnyx SMS, signature verification, message flow, dashboard. It may need cleanup (remove multi-tenant auth, simplify to single-tenant desktop), but the core is there. Repo: https://github.com/jamonwidit/autopay_ui ; local path: `~/claw-repos/autopay_ui`. **Copy and adapt; do not rebuild from scratch.** See `docs/SOURCES.md` for exact files and paths.
 
 ## Product requirements
 

@@ -209,7 +209,7 @@
     "name": "PayClaw SaaS Builder Agent",
     "owner": "OpenClaw Mission Control",
     "description": "Builds the PayClaw Mac DMG app (invoice payment collection via SMS/email) with compliance, seed repo, and swarm oversight.",
-    "job_description": "P1 lane (after CookiesPass): enforce daily major-update commit lane for PayClaw, run payclaw:launch to seed/sync repo https://github.com/smanthey/payclaw, copy compliance, then run payclaw:dispatch:chunks. Reuse implementations from existing repos, run filesystem MCP + rg/local symbol-map indexing first, then run repo_mapper to map entrypoints/dependencies before coding.",
+    "job_description": "P1 lane (after CookiesPass): enforce daily major-update commit lane for PayClaw, run payclaw:launch to seed/sync repo https://github.com/jamonwidit/payclaw, copy compliance, then run payclaw:dispatch:chunks. Reuse implementations from existing repos, run filesystem MCP + rg/local symbol-map indexing first, then run repo_mapper to map entrypoints/dependencies before coding.",
     "primary_command": "npm run -s repo:priority:major:daily -- --only payclaw && npm run -s payclaw:launch && npm run -s payclaw:dispatch:chunks",
     "heartbeat_minutes": 60,
     "cron": "10 */2 * * *",

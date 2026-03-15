@@ -407,7 +407,7 @@ Vitamin patches: fast-growing segment, tiny shelf space, ~58% margin, strong rep
           <td align="right">
             <div style="font-family:Arial,sans-serif;font-size:11px;color:#888888;line-height:1.8;">
               <a href="https://skynpatch.com" style="color:#f0c040;text-decoration:none;">skynpatch.com</a><br>
-              (408) 386-1907
+              (xxx) xxx-xxxx
             </div>
           </td>
         </tr>
@@ -568,7 +568,7 @@ Vitamin patches: fast-growing segment, tiny shelf space, ~58% margin, strong rep
         <span style="color:#888888;font-size:11px;">
           Skyn Patch &nbsp;·&nbsp;
           <a href="mailto:shop@skynpatch.com" style="color:#888888;">shop@skynpatch.com</a>
-          &nbsp;·&nbsp; (408) 386-1907
+          &nbsp;·&nbsp; (xxx) xxx-xxxx
         </span>
       </p>
     </td>

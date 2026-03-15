@@ -139,7 +139,7 @@ function buyerConfirmationEmail(session, lineItems) {
           <div style="font-family:Arial,sans-serif;font-size:11px;color:#ccc;margin-top:3px;">Wear Your Wellness™</div></td>
       <td align="right" style="font-family:Arial,sans-serif;font-size:12px;color:#ccc;line-height:1.7;">
         <a href="https://skynpatch.com" style="color:#ccc;">skynpatch.com</a><br>
-        shop@skynpatch.com<br>(408) 386-1907</td>
+        shop@skynpatch.com<br>(xxx) xxx-xxxx</td>
     </tr></table>
   </td></tr>
 
@@ -180,7 +180,7 @@ function buyerConfirmationEmail(session, lineItems) {
     <div style="background:#f5f5f5;border-left:4px solid #f0c040;padding:14px 16px;border-radius:2px;">
       <div style="font-family:Arial,sans-serif;font-size:13px;color:#333;line-height:1.7;">
         📦 <strong>Shipping:</strong> 7–10 business days after order confirmation<br>
-        🔄 <strong>Reorders:</strong> Reply to this email or call (408) 386-1907<br>
+        🔄 <strong>Reorders:</strong> Reply to this email or call (xxx) xxx-xxxx<br>
         📦 <strong>Display:</strong> Shelf-ready display stands included with first order<br>
         🏷️  <strong>Order Ref:</strong> <code style="font-size:11px;color:#888;">${esc(orderId)}</code>
       </div>
@@ -192,7 +192,7 @@ function buyerConfirmationEmail(session, lineItems) {
     <p style="font-family:Arial,sans-serif;font-size:13px;color:#333;">
       <a href="mailto:shop@skynpatch.com" style="color:#000;font-weight:bold;">shop@skynpatch.com</a>
       &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a href="tel:4083861907" style="color:#000;font-weight:bold;">(408) 386-1907</a>
+      <a href="tel:0000000000" style="color:#000;font-weight:bold;">(xxx) xxx-xxxx</a>
     </p>
   </td></tr>
 

@@ -8,7 +8,7 @@
 
 **The `autopay_ui` repo has most of what PayClaw needs.** Stripe checkout/webhooks, Telnyx SMS, message flow, dashboard, and credit logic are already implemented. It may need cleanup (remove multi-tenant auth, simplify to single-tenant desktop), but the core is there. Clone it from claw-repos or the git repo below; copy and adapt rather than rebuilding from scratch.
 
-- **Git repo:** https://github.com/smanthey/autopay_ui  
+- **Git repo:** https://github.com/jamonwidit/autopay_ui  
 - **Local path:** `~/claw-repos/autopay_ui` (or `$REPOS_BASE_PATH/autopay_ui`)
 
 ---
