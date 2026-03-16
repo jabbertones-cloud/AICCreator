@@ -38,19 +38,34 @@ function hasArg(flag) {
   return process.argv.includes(flag);
 }
 
+function getArg(flag, fallback = null) {
+  const idx = process.argv.indexOf(flag);
+  if (idx < 0 || idx + 1 >= process.argv.length) return fallback;
+  const value = String(process.argv[idx + 1] || "").trim();
+  return value || fallback;
+}
+
 function main() {
   const keyshots = hasArg("--keyshots") ? process.argv[process.argv.indexOf("--keyshots") + 1] : "0";
   const noReddit = hasArg("--no-reddit");
   const noResearch = hasArg("--no-research");
+  const includeComments = hasArg("--comments");
+  const singleUrl = getArg("--url", null);
+  const outJson = getArg("--out", path.join(ROOT, "reports", "youtube-transcript-visual-index-latest.json"));
 
-  console.log("[content-creator-pipeline] 1. YouTube index (transcript + metadata, keyshots=" + keyshots + ")");
+  console.log("[content-creator-pipeline] 1. YouTube index (transcript + metadata, keyshots=" + keyshots + ", comments=" + includeComments + ")");
   const urlsFile = path.join(ROOT, "data", "youtube-urls.txt");
-  const outJson = path.join(ROOT, "reports", "youtube-transcript-visual-index-latest.json");
-  if (!fs.existsSync(urlsFile)) {
+  if (!singleUrl && !fs.existsSync(urlsFile)) {
     console.error("[content-creator-pipeline] Missing data/youtube-urls.txt. Add one YouTube URL per line.");
     process.exit(1);
   }
-  const indexArgs = ["--urls-file", urlsFile, "--out", outJson, "--keyshots", String(keyshots)];
+  const indexArgs = ["--out", outJson, "--keyshots", String(keyshots)];
+  if (singleUrl) {
+    indexArgs.push("--url", singleUrl);
+  } else {
+    indexArgs.push("--urls-file", urlsFile);
+  }
+  if (includeComments) indexArgs.push("--comments");
   const indexRes = run("node", [path.join(ROOT, "scripts", "youtube-transcript-visual-index.js"), ...indexArgs]);
   if (!indexRes.ok) {
     console.error("[content-creator-pipeline] YouTube index failed. Try --keyshots 0 if disk is tight.");
@@ -86,7 +101,7 @@ function main() {
   console.log("\n[content-creator-pipeline] Done.");
   console.log("  - Brief: docs/INAYAN-BUILDER-VIDEO-SPEC.md");
   console.log("  - Brief JSON: reports/content-creator-brief-latest.json");
-  console.log("  - Index: reports/youtube-transcript-visual-index-latest.json");
+  console.log("  - Index: " + outJson);
   console.log("  - Reddit: reports/reddit-search-research-latest.json");
   console.log("  - Research: reports/builder-research-agenda-latest.json");
   console.log("  Next: Use brief + research to run copy generation (e.g. POST /api/goal with a content goal, or copy_lab_run / aicreator task).");

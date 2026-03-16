@@ -4,7 +4,15 @@
 const fs = require("fs");
 const path = require("path");
 const { Pool } = require("pg");
-require("dotenv").config({ path: path.join(__dirname, "../.env") });
+
+// Load .env: AICCreator first, then fallback to claw-architect (../../claw-architect or CLAW_ARCHITECT_ROOT)
+const ROOT_DIR = path.join(__dirname, "..");
+const envPaths = [path.join(ROOT_DIR, ".env")];
+const archRoot = process.env.CLAW_ARCHITECT_ROOT || path.join(ROOT_DIR, "..", "..", "claw-architect");
+if (fs.existsSync(path.join(archRoot, ".env"))) envPaths.push(path.join(archRoot, ".env"));
+for (const p of envPaths) {
+  if (fs.existsSync(p)) require("dotenv").config({ path: p, override: false });
+}
 
 const JSON_OUT = process.argv.includes("--json");
 const STRICT = process.argv.includes("--strict");

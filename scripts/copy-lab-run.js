@@ -27,6 +27,7 @@ async function main() {
   const goal = String(arg("--goal", "")).trim();
   const notebook_context = String(arg("--notebook-context", "")).trim();
   const iterations = Number(arg("--iterations", "2"));
+  const batch = Number(arg("--batch", "1"));
   const persist_brief = !has("--no-persist-brief");
   const dry_run = has("--dry-run");
   const sources = String(arg("--sources", ""))
@@ -55,32 +56,65 @@ async function main() {
     return;
   }
 
-  const id = uuidv4();
-  const routing = resolveRouting("copy_lab_run");
-  const idempotency_key = buildTaskIdempotencyKey("copy_lab_run", payload);
+  if (batch > 1) {
+    // Batch mode: queue multiple tasks
+    const promises = [];
+    for (let b = 0; b < batch; b++) {
+      const id = uuidv4();
+      const routing = resolveRouting("copy_lab_run");
+      const idempotency_key = buildTaskIdempotencyKey("copy_lab_run", payload);
 
-  await pg.query(
-    `INSERT INTO tasks (
-      id, type, payload, status, priority, worker_queue, required_tags, idempotency_key, title
-    ) VALUES ($1,$2,$3,'CREATED',$4,$5,$6,$7,$8)`,
-    [
-      id,
-      "copy_lab_run",
-      JSON.stringify(payload),
-      4,
-      routing.queue,
-      routing.required_tags || [],
-      idempotency_key,
-      `Copy Lab: ${brand_slug} ${channel} ${topic}`.slice(0, 240),
-    ]
-  );
+      const p = pg.query(
+        `INSERT INTO tasks (
+          id, type, payload, status, priority, worker_queue, required_tags, idempotency_key, title
+        ) VALUES ($1,$2,$3,'CREATED',$4,$5,$6,$7,$8)`,
+        [
+          id,
+          "copy_lab_run",
+          JSON.stringify(payload),
+          4,
+          routing.queue,
+          routing.required_tags || [],
+          idempotency_key,
+          `Copy Lab: ${brand_slug} ${channel} ${topic}`.slice(0, 240),
+        ]
+      );
+      promises.push(p);
+      promises.push(pg.query(`SELECT pg_notify('task_created', $1)`, [id]).catch(() => {}));
+    }
 
-  await pg.query(`SELECT pg_notify('task_created', $1)`, [id]).catch(() => {});
+    await Promise.all(promises);
+    console.log(`Queued ${batch} copy_lab_run tasks`);
+    console.log(`brand=${brand_slug} channel=${channel} topic=${topic}`);
+  } else {
+    // Single task mode
+    const id = uuidv4();
+    const routing = resolveRouting("copy_lab_run");
+    const idempotency_key = buildTaskIdempotencyKey("copy_lab_run", payload);
 
-  console.log("Queued copy_lab_run task:");
-  console.log(`task_id=${id}`);
-  console.log(`queue=${routing.queue}`);
-  console.log(`brand=${brand_slug} channel=${channel} topic=${topic}`);
+    await pg.query(
+      `INSERT INTO tasks (
+        id, type, payload, status, priority, worker_queue, required_tags, idempotency_key, title
+      ) VALUES ($1,$2,$3,'CREATED',$4,$5,$6,$7,$8)`,
+      [
+        id,
+        "copy_lab_run",
+        JSON.stringify(payload),
+        4,
+        routing.queue,
+        routing.required_tags || [],
+        idempotency_key,
+        `Copy Lab: ${brand_slug} ${channel} ${topic}`.slice(0, 240),
+      ]
+    );
+
+    await pg.query(`SELECT pg_notify('task_created', $1)`, [id]).catch(() => {});
+
+    console.log("Queued copy_lab_run task:");
+    console.log(`task_id=${id}`);
+    console.log(`queue=${routing.queue}`);
+    console.log(`brand=${brand_slug} channel=${channel} topic=${topic}`);
+  }
 }
 
 main()

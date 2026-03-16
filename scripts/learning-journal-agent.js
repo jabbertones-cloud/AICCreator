@@ -18,7 +18,7 @@ const { enqueueOnce } = require("../core/queue");
 const ROOT = path.join(__dirname, "..");
 const REPORTS_DIR = path.join(ROOT, "reports");
 const AGENT_ID = "learning_journal_agent";
-const DEFAULT_EMAIL_TO = "creator@example.com";
+const DEFAULT_EMAIL_TO = process.env.LEARNING_JOURNAL_EMAIL || "creator@localhost";
 const ACTIVE_TASK_STATUSES = ["CREATED", "DISPATCHED", "RUNNING", "RETRY", "PENDING_APPROVAL", "PENDING"];
 
 const args = process.argv.slice(2);

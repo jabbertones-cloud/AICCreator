@@ -49,8 +49,12 @@ function main() {
 
   // 1) Goal (from plan + any transcript hint)
   const allText = rows
-    .filter((r) => !r.error && r.transcript?.segments?.length)
-    .map((r) => (r.transcript.segments || []).map((s) => s.text).join(" "))
+    .filter((r) => !r.error)
+    .map((r) => {
+      if (r.content_input?.transcript) return String(r.content_input.transcript);
+      if (r.transcript?.segments?.length) return (r.transcript.segments || []).map((s) => s.text).join(" ");
+      return "";
+    })
     .join("\n\n");
   const hasTranscript = allText.length > 0;
 
@@ -87,6 +91,13 @@ Build and ship **InayanBuilderBot** as a product that:
     sections.push(`| ${id} | ${url} | ${title} | ${hasT} |`);
   }
 
+  const allCommentThemes = [...new Set(
+    rows.flatMap((r) => Array.isArray(r.content_input?.comment_themes) ? r.content_input.comment_themes : [])
+  )];
+  const allCtaMoments = rows.flatMap((r) => Array.isArray(r.content_input?.cta_moments) ? r.content_input.cta_moments : []);
+  const topComments = rows.flatMap((r) => Array.isArray(r.content_input?.top_comments) ? r.content_input.top_comments : [])
+    .slice(0, 20);
+
   // 3) Combined transcript (if any)
   if (hasTranscript) {
     sections.push(`## Combined transcript (excerpt)
@@ -102,6 +113,27 @@ ${allText.slice(0, 50000).replace(/```/g, "`​`​`")}
 
 No transcript text in the index (e.g. dry-run or captions unavailable). Re-run \`npm run youtube:index:auto\` with yt-dlp installed and sufficient disk, or run with \`--keyshots 0\` to get metadata+subs only. Then re-run this script to regenerate the brief with transcript content.
 `);
+  }
+
+  sections.push(`## Content input intelligence
+
+- **Comment themes:** ${allCommentThemes.length ? allCommentThemes.join(", ") : "(none)"}
+- **CTA moments detected:** ${allCtaMoments.length}
+- **Top comments captured:** ${topComments.length}
+`);
+
+  if (topComments.length) {
+    sections.push(`### Top comments (excerpt)
+
+| Author | Likes | Comment |
+|--------|-------|---------|
+`);
+    for (const c of topComments.slice(0, 10)) {
+      const author = c.author || "(unknown)";
+      const likes = Number(c.like_count || 0);
+      const comment = String(c.text || "").replace(/\|/g, "\\|").slice(0, 220);
+      sections.push(`| ${author} | ${likes} | ${comment} |`);
+    }
   }
 
   // 4) Steps and features (canonical from plan)

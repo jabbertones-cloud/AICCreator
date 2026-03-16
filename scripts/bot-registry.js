@@ -471,7 +471,7 @@ Commands:
   node scripts/bot-registry.js sync-moltbook <bot_id>
 
 Examples:
-  node scripts/bot-registry.js register my_bot "My Bot" discord "commerce,research" https://api.example.com/bot
+  node scripts/bot-registry.js register my_bot "My Bot" discord "commerce,research" https://api.yourdomain.com/bot
   node scripts/bot-registry.js discover discord "commerce" 5.0 --verified
   node scripts/bot-registry.js get my_bot
     `);

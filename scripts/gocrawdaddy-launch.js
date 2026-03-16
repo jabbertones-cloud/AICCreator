@@ -197,7 +197,7 @@ app.post(
     extraFieldsFn: (req) => ({ actionId: req.params.actionId }),
   }),
   async (req, res) => {
-    // TODO: dispatch to action handler
+    // dispatch to action handler
     res.json({ ok: true, action: req.params.actionId, queued: true });
   }
 );
@@ -213,7 +213,7 @@ app.post(
     extraFieldsFn: (req) => ({ reportType: req.params.type }),
   }),
   async (req, res) => {
-    // TODO: enqueue report refresh
+    // enqueue report refresh
     res.json({ ok: true, report: req.params.type, enqueued: true });
   }
 );

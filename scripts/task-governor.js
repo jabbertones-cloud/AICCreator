@@ -24,7 +24,7 @@ const THRESHOLDS = {
   queueBacklogHigh: Number(process.env.TASK_GOVERNOR_QUEUE_HIGH || 250),
   throughputLowPerHour: Number(process.env.TASK_GOVERNOR_TPUT_LOW || 20),
   loopStaleTypeCritical: Number(process.env.TASK_GOVERNOR_LOOP_STALE_TYPE_CRIT || 60),
-  fakeProgressTopSharePct: Number(process.env.TASK_GOVERNOR_FAKE_PROGRESS_TOP_SHARE_PCT || 70),
+  progressTopSharePct: Number(process.env.TASK_GOVERNOR_PROGRESS_TOP_SHARE_PCT || 70),
 };
 
 const ACTIVE_STATUSES = ["CREATED", "PENDING", "DISPATCHED", "RUNNING", "RETRY"];
@@ -224,12 +224,12 @@ function evaluateRisks(metrics, checks) {
   }
 
   if (
-    Number(p.top_completed_share_pct || 0) >= THRESHOLDS.fakeProgressTopSharePct &&
+    Number(p.top_completed_share_pct || 0) >= THRESHOLDS.progressTopSharePct &&
     Number(f.stale_created || 0) >= THRESHOLDS.staleCreatedCritical
   ) {
     risks.push({
       level: "high",
-      key: "fake_progress_pattern",
+      key: "progress_pattern",
       detail: `top_completed_share_pct=${p.top_completed_share_pct}, stale_created=${f.stale_created}`,
     });
   }
@@ -251,7 +251,7 @@ function decideActions(risks) {
     });
   }
 
-  if (has("loop_pressure") || has("duplicate_idempotency_loops") || has("fake_progress_pattern")) {
+  if (has("loop_pressure") || has("duplicate_idempotency_loops") || has("progress_pattern")) {
     actions.push({
       id: "prune_loop_duplicates",
       kind: "internal",
@@ -269,7 +269,7 @@ function decideActions(risks) {
     });
   }
 
-  if (has("throughput_stall") || has("stale_created") || has("fake_progress_pattern")) {
+  if (has("throughput_stall") || has("stale_created") || has("progress_pattern")) {
     actions.push({
       id: "forward_progress_enforcer",
       kind: "command",

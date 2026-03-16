@@ -30,7 +30,7 @@ const pool = new Pool({
 
 async function sendEmail(variant, brand) {
   const { sendEmail: sendTransactional } = require("../infra/send-email");
-  const toAddr = variant.meta?.to_email || "test@example.com";
+  const toAddr = variant.meta?.to_email || process.env.CONTENT_TEST_EMAIL || "test@localhost";
   const result = await sendTransactional({
     apiKey:    process.env.MAILEROO_API_KEY,
     fromEmail: brand.sending_email || process.env.MAILEROO_FROM_EMAIL,

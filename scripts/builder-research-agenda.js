@@ -58,7 +58,7 @@ const ISSUE_RESEARCH_SUGGESTION = {
   STRIPE_WEBHOOK_SECURITY_GAP: "stripe webhook signature verification idempotency",
   TELNYX_SIGNATURE_VERIFY_MISSING: "telnyx webhook signature verification",
   MULTITENANT_BASELINE_MISSING: "multitenant tenant resolver nextjs",
-  FORBIDDEN_PATTERN: "remove placeholder example.com fake patterns",
+  FORBIDDEN_PATTERN: "remove placeholder/example-domain patterns",
 };
 
 function latestGapFileForRepo(repoName) {

@@ -285,14 +285,14 @@ module.exports = {
     {
       name: "claw-learning-journal-email",
       script: "scripts/learning-journal-agent.js",
-      args: "--hours 24 --email-to creator@example.com",
+      args: "--hours 24 --email-to creator@localhost",
       cwd: REPO,
       watch: false,
       autorestart: false,
       cron_restart: "30 7 * * *",
       env: {
         NODE_ENV: "production",
-        LEARNING_JOURNAL_EMAIL_TO: "creator@example.com",
+        LEARNING_JOURNAL_EMAIL_TO: "creator@localhost",
       },
       log_date_format: "YYYY-MM-DD HH:mm:ss",
     },

@@ -12,9 +12,9 @@
 //   SCRAPE_LINKS          — extract all links from a page
 //
 // CLI usage:
-//   node agents/playwright-scraper-agent.js --url https://example.com
-//   node agents/playwright-scraper-agent.js --url https://example.com --mode contacts
-//   node agents/playwright-scraper-agent.js --url https://example.com --mode text
+//   node agents/playwright-scraper-agent.js --url https://yourdomain.com
+//   node agents/playwright-scraper-agent.js --url https://yourdomain.com --mode contacts
+//   node agents/playwright-scraper-agent.js --url https://yourdomain.com --mode text
 // ─────────────────────────────────────────────────────────────────────────────
 
 'use strict';
@@ -29,7 +29,7 @@ const NAV_TIMEOUT_MS = 30_000;
 
 const JUNK_EMAIL_DOMAINS = new Set([
   'gmail.com','yahoo.com','hotmail.com','outlook.com','icloud.com',
-  'example.com','sentry.io','sentry-next.io','w3.org','schema.org',
+  'example.org','sentry.io','sentry-next.io','w3.org','schema.org',
   'google.com','facebook.com','instagram.com','twitter.com','x.com',
   'amazon.com','cloudflare.com','jquery.com','wordpress.org',
 ]);

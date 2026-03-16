@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Off-Grid Home Mission Panel</title>
+  <title>Your Off-Grid Home</title>
   <style>
     :root {
       --bg0: #08101d;
@@ -139,12 +139,12 @@
   <div class="wrap">
     <div class="topbar">
       <div>
-        <h1>Off-Grid Home Mission Panel</h1>
-        <div class="muted">Meshtastic + Home Assistant + local AI with guided onboarding</div>
+        <h1>Your Off-Grid Home</h1>
+        <div class="muted">Radio mesh + smart home + AI — all working together. We'll walk you through it.</div>
       </div>
       <div class="row wrap" style="margin:0;">
-        <a href="/" style="text-decoration:none;"><button class="ghost" type="button">Back to Mission Control</button></a>
-        <button type="button" onclick="refreshAll(true)">Refresh All</button>
+        <a href="/" style="text-decoration:none;"><button class="ghost" type="button">Back to Home</button></a>
+        <button type="button" onclick="refreshAll(true)">Check Everything</button>
       </div>
     </div>
 
@@ -152,33 +152,33 @@
       <div class="card wide">
         <div class="row">
           <div>
-            <div class="title">Onboarding Walkthrough</div>
-            <div class="muted" id="onboardSummary">Checking setup…</div>
+            <div class="title">Let's Get This Set Up</div>
+            <div class="muted" id="onboardSummary">Making sure everything's ready...</div>
           </div>
           <div class="badge" id="onboardBadge">incomplete</div>
         </div>
         <div class="progress-shell"><div class="progress-fill" id="onboardProgress"></div></div>
         <div class="row wrap" style="margin-top:10px;">
-          <button class="secondary" type="button" onclick="runWalkthroughAction('saveApi')">Save API Key</button>
-          <button class="secondary" type="button" onclick="runWalkthroughAction('testMesh')">Send Test Mesh Ping</button>
-          <button class="secondary" type="button" onclick="runWalkthroughAction('refresh')">Re-check Setup</button>
-          <button class="ghost" type="button" onclick="toggleWalkthrough()" id="walkthroughToggleBtn">Show Walkthrough Steps</button>
+          <button class="secondary" type="button" onclick="runWalkthroughAction('saveApi')">Save Your Key</button>
+          <button class="secondary" type="button" onclick="runWalkthroughAction('testMesh')">Test Your Radio</button>
+          <button class="secondary" type="button" onclick="runWalkthroughAction('refresh')">Check Again</button>
+          <button class="ghost" type="button" onclick="toggleWalkthrough()" id="walkthroughToggleBtn">See All Steps</button>
         </div>
         <div id="walkthroughSteps" class="hidden" style="margin-top:10px;">
           <ol style="margin:0; padding-left: 20px; display:grid; gap:8px; line-height:1.6;">
-            <li><strong>Get your Architect API key:</strong> This is the <code>ARCHITECT_API_KEY</code> from your <code>.env</code> file. It's used to authenticate API calls from this dashboard. If you don't have one, check your <code>.env</code> file or set <code>ARCHITECT_API_KEY=your-secret-key-here</code> and restart the architect-api service.</li>
-            <li><strong>Save the API key:</strong> Paste it in the "API Key" field above and click "Save Key". This stores it in your browser's local storage so the dashboard can make authenticated requests.</li>
-            <li><strong>Confirm bridge heartbeat:</strong> The Meshtastic bridge service should be running and show "online" status. Check that <code>claw-offgrid-meshtastic-bridge</code> is running in PM2.</li>
-            <li><strong>Verify Home Assistant:</strong> Set <code>HOME_ASSISTANT_URL</code> (e.g., <code>http://homeassistant.local:8123</code>) and <code>HOME_ASSISTANT_TOKEN</code> (long-lived access token from HA) in your <code>.env</code> file.</li>
-            <li><strong>Configure entities:</strong> Set <code>OFFGRID_LIGHT_ENTITIES</code>, <code>OFFGRID_SENSOR_ENTITIES</code>, and <code>OFFGRID_PRESENCE_ENTITIES</code> as comma-separated lists (e.g., <code>light.living_room,light.kitchen</code>).</li>
-            <li><strong>Test mesh communication:</strong> Send a test mesh message (click "Send Test Mesh Ping" button) and verify it appears in the "Recent Mesh Commands" and "Recent Mesh Events" tables.</li>
+            <li><strong>Find your secret key:</strong> Look in your settings file for something called <code>ARCHITECT_API_KEY</code>. If you don't see it, that's okay—just add it to your settings file and restart the app running in the background.</li>
+            <li><strong>Save your key:</strong> Paste the key into the field above and click "Save Your Key". This saves it so the dashboard can talk to the main system.</li>
+            <li><strong>Make sure your radio is on:</strong> Your radio gadget needs to be plugged in and turned on. You should see it say "online" here.</li>
+            <li><strong>Set up your smart home brain:</strong> Make sure your smart home system is running on your local network and knows how to connect.</li>
+            <li><strong>Tell us about your devices:</strong> Add a list of your lights, plugs, or sensors so we can control them. Put them in your settings file.</li>
+            <li><strong>Test your radio:</strong> Send a quick message through your radio by clicking "Test Your Radio" and make sure it shows up in the tables below.</li>
           </ol>
           <div style="margin-top:12px; padding:10px; background:#0a1526; border:1px solid #294267; border-radius:8px;">
             <div style="font-weight:700; margin-bottom:6px;">💡 Quick Start:</div>
             <div style="font-size:12px; color:var(--muted);">
-              <div>1. Find your <code>ARCHITECT_API_KEY</code> in <code>.env</code> (or create one if missing)</div>
-              <div>2. Paste it in the "API Key" field and click "Save Key"</div>
-              <div>3. Click "Re-check Setup" to see your progress</div>
+              <div>1. Find your secret key in your settings file (or create one if you don't have it)</div>
+              <div>2. Paste it in the field above and click "Save Your Key"</div>
+              <div>3. Click "Check Again" to see your progress</div>
             </div>
           </div>
         </div>
@@ -186,47 +186,46 @@
       </div>
 
       <div class="card kpi">
-        <div class="title">Bridge</div>
+        <div class="title">Radio Status</div>
         <div id="kBridge" class="big">unknown</div>
         <div id="kBridgeMeta" class="muted">-</div>
       </div>
       <div class="card kpi">
-        <div class="title">Pending Mesh Commands</div>
+        <div class="title">Waiting to Send</div>
         <div id="kPending" class="big">0</div>
       </div>
       <div class="card kpi">
-        <div class="title">Inbound Events (100)</div>
+        <div class="title">Messages Received</div>
         <div id="kEvents" class="big">0</div>
       </div>
       <div class="card kpi">
-        <div class="title">HA Reachability</div>
+        <div class="title">Smart Home</div>
         <div id="kHa" class="big">unknown</div>
       </div>
 
       <div class="card panel">
         <div class="row">
-          <div class="title">API Key + Mesh Command Console</div>
+          <div class="title">Your Keys & Commands</div>
           <div class="row wrap" style="margin:0; gap:8px;">
-            <button class="ghost" onclick="saveApiKey()">Save Key</button>
+            <button class="ghost" onclick="saveApiKey()">Save Your Key</button>
             <button class="ghost" onclick="showApiKeyHelp()" style="font-size:11px;">❓ Where do I find this?</button>
           </div>
         </div>
         <div class="row">
-          <input id="apiKey" type="password" placeholder="Paste ARCHITECT_API_KEY from your .env file here" autocomplete="off" />
+          <input id="apiKey" type="password" placeholder="Paste your secret key here" autocomplete="off" />
         </div>
         <div class="muted" style="font-size:12px; margin-top:4px;">
-          This is the <code>ARCHITECT_API_KEY</code> value from your <code>.env</code> file. It authenticates API calls from this dashboard. 
-          If you don't have one, add <code>ARCHITECT_API_KEY=your-secret-key-here</code> to your <code>.env</code> and restart the architect-api service.
+          Paste your special key here so we can talk to the main system. If you don't have one, you can create it in your settings file.
         </div>
         <div id="apiKeyHelp" class="hidden" style="margin-top:10px; padding:10px; background:#0a1526; border:1px solid #294267; border-radius:8px; font-size:12px;">
-          <div style="font-weight:700; margin-bottom:6px;">📋 How to get your ARCHITECT_API_KEY:</div>
+          <div style="font-weight:700; margin-bottom:6px;">📋 How to find your secret key:</div>
           <ol style="margin:4px 0; padding-left:20px; line-height:1.6;">
-            <li>Open your <code>.env</code> file in the project root directory</li>
+            <li>Open your settings file (usually called <code>.env</code>)</li>
             <li>Look for a line that says <code>ARCHITECT_API_KEY=...</code></li>
-            <li>If it exists, copy the value after the <code>=</code> sign</li>
-            <li>If it doesn't exist, add this line: <code>ARCHITECT_API_KEY=your-secret-key-here</code> (replace with a strong random string)</li>
-            <li>Restart the architect-api service: <code>pm2 restart claw-architect-api</code></li>
-            <li>Paste the key value in the field above and click "Save Key"</li>
+            <li>If you see it, copy what comes after the <code>=</code> sign</li>
+            <li>If you don't see it, that's okay! Add a new line that says <code>ARCHITECT_API_KEY=my-secret-key-123</code> (use something random)</li>
+            <li>Restart the app running in the background</li>
+            <li>Paste the key here and click "Save Your Key"</li>
           </ol>
         </div>
         <div class="row">
@@ -241,12 +240,12 @@
           <button class="ghost" type="button" onclick="insertTemplate('lights')">Template: Lights</button>
           <button class="ghost" type="button" onclick="insertTemplate('presence')">Template: Presence</button>
         </div>
-        <div class="muted">Commands are queued locally and transmitted over Meshtastic.</div>
+        <div class="muted">Your messages are saved here and sent through your radio.</div>
       </div>
 
       <div class="card panel">
-        <div class="title">QR Import + Setup Notes</div>
-        <div class="muted">Upload QR screenshots (Meshtastic/HA docs) to auto-extract text and generate onboarding hints.</div>
+        <div class="title">Quick Setup</div>
+        <div class="muted">Take a picture of a QR code from your setup and we'll read it for you.</div>
         <div class="row wrap">
           <input id="qrFile" type="file" accept="image/*" multiple />
           <button type="button" class="secondary" onclick="decodeSelectedQrs()">Decode QR Upload</button>
@@ -262,7 +261,7 @@
       </div>
 
       <div class="card panel">
-        <div class="title">Quick Light Controls</div>
+        <div class="title">Turn Lights On/Off</div>
         <div class="row">
           <select id="lightSelect"></select>
           <input id="lightBrightness" type="number" min="1" max="100" value="100" />
@@ -279,7 +278,7 @@
       </div>
 
       <div class="card wide">
-        <div class="title">Offgrid Hue Pattern Pack</div>
+        <div class="title">Light Shows</div>
         <div class="row wrap">
           <button class="ghost" type="button" onclick="refreshPatternPack()">Refresh Pattern Pack</button>
           <button class="secondary" type="button" onclick="queuePatternPackTasks()">Queue Fix Tasks</button>
@@ -292,7 +291,7 @@
       </div>
 
       <div class="card panel">
-        <div class="title">Recent Mesh Commands</div>
+        <div class="title">What You Just Sent</div>
         <table id="commandsTable">
           <thead><tr><th>Time</th><th>To</th><th>Text</th><th>Status</th></tr></thead>
           <tbody></tbody>
@@ -300,7 +299,7 @@
       </div>
 
       <div class="card wide">
-        <div class="title">Home Snapshot</div>
+        <div class="title">Your Home Right Now</div>
         <table id="snapshotTable">
           <thead><tr><th>Entity</th><th>State</th><th>Details</th></tr></thead>
           <tbody></tbody>
@@ -308,7 +307,7 @@
       </div>
 
       <div class="card wide">
-        <div class="title">Recent Mesh Events</div>
+        <div class="title">Radio Messages</div>
         <table id="eventsTable">
           <thead><tr><th>Time</th><th>Dir</th><th>From</th><th>Text</th></tr></thead>
           <tbody></tbody>
@@ -348,11 +347,11 @@
     function saveApiKey() {
       const key = el('apiKey').value.trim();
       if (!key) {
-        toast('Enter an API key first.', 'warn');
+        toast('Put your key in first.', 'warn');
         return;
       }
       localStorage.setItem(KEY_STORAGE, key);
-      toast('API key saved locally.', 'ok');
+      toast('Key saved!', 'ok');
       refreshAll(true);
     }
 
@@ -473,30 +472,30 @@
     function renderOnboarding() {
       const s = onboardingState();
       const checks = [
-        { 
-          key: 'apiKeyPresent', 
-          label: 'Architect API key saved', 
-          hint: 'Paste ARCHITECT_API_KEY from .env file in the field above and click "Save Key". This is required for protected /api routes.' 
+        {
+          key: 'apiKeyPresent',
+          label: 'Your key is saved',
+          hint: 'Paste your special key here so we can talk to the main system.'
         },
-        { 
-          key: 'bridgeOnline', 
-          label: 'Meshtastic bridge online', 
-          hint: 'The claw-offgrid-meshtastic-bridge service should be running in PM2 and show connected=true in heartbeat.' 
+        {
+          key: 'bridgeOnline',
+          label: 'Your radio is talking',
+          hint: 'Your radio gadget needs to be plugged in and turned on.'
         },
-        { 
-          key: 'haConfigured', 
-          label: 'Home Assistant configured', 
-          hint: 'Set HOME_ASSISTANT_URL (e.g., http://homeassistant.local:8123) and HOME_ASSISTANT_TOKEN (long-lived token from HA) in .env file.' 
+        {
+          key: 'haConfigured',
+          label: 'Your smart home is set up',
+          hint: 'Your smart home brain needs to be running on your local network.'
         },
-        { 
-          key: 'entitiesConfigured', 
-          label: 'Home Assistant entities configured', 
-          hint: 'Set OFFGRID_LIGHT_ENTITIES, OFFGRID_SENSOR_ENTITIES, and/or OFFGRID_PRESENCE_ENTITIES as comma-separated lists in .env (e.g., light.living_room,sensor.temperature).' 
+        {
+          key: 'entitiesConfigured',
+          label: 'Your devices are ready',
+          hint: 'Tell us which lights, plugs, or sensors you have so we can control them.'
         },
-        { 
-          key: 'meshTested', 
-          label: 'Mesh communication tested', 
-          hint: 'Send one test mesh command (click "Send Test Mesh Ping" button) and verify it appears in recent commands/events tables.' 
+        {
+          key: 'meshTested',
+          label: 'Your radio works',
+          hint: 'Send a quick radio message to make sure everything is connected.'
         },
       ];
       const done = checks.filter((c) => s[c.key]).length;
@@ -540,10 +539,10 @@
       const hidden = box.classList.contains('hidden');
       if (hidden) {
         box.classList.remove('hidden');
-        btn.textContent = 'Hide Walkthrough Steps';
+        btn.textContent = 'Hide Steps';
       } else {
         box.classList.add('hidden');
-        btn.textContent = 'Show Walkthrough Steps';
+        btn.textContent = 'See All Steps';
       }
     }
 
@@ -573,11 +572,11 @@
         renderEvents(status);
         renderPatternPack(patternPack);
         renderOnboarding();
-        if (showToast) toast('Off-grid panel refreshed.', 'ok');
+        if (showToast) toast('All updated!', 'ok');
       } catch (e) {
         console.error(e);
         renderOnboarding();
-        toast('API request failed. Verify API key, bridge service, and auth.', 'bad');
+        toast('Hmm, couldn\'t connect. Check your key and make sure everything is running.', 'bad');
       }
     }
 
@@ -606,11 +605,11 @@
     async function sendMesh() {
       const text = el('cmdText').value.trim();
       const to = el('cmdTo').value.trim() || 'broadcast';
-      if (!text) return toast('Enter a command first.', 'warn');
+      if (!text) return toast('Type something to send first.', 'warn');
       await postJson('/api/offgrid/mesh/send', { text, to });
       localStorage.setItem(MESH_TEST_KEY, String(Date.now()));
       el('cmdText').value = '';
-      toast('Command queued to mesh.', 'ok');
+      toast('Message sent to your radio!', 'ok');
       await refreshAll();
     }
 

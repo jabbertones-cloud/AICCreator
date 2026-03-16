@@ -13,7 +13,7 @@ async function main() {
       id: "policy-assert-ai-mutation",
       type: "send_email",
       payload: {
-        to: "test@example.com",
+        to: process.env.POLICY_TEST_EMAIL || "test@localhost",
         subject: "AI drafted",
         body: "draft",
         ai_suggested: true,

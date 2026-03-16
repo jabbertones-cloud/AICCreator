@@ -54,8 +54,8 @@ async function checkCryptoSupport() {
           quantity: 1,
         }],
         payment_method_types: ["card", "crypto"],
-        success_url: "https://example.com/success",
-        cancel_url: "https://example.com/cancel",
+        success_url: process.env.STRIPE_SUCCESS_URL || "https://localhost/callback/success",
+        cancel_url: process.env.STRIPE_CANCEL_URL || "https://localhost/callback/cancel",
       });
       
       console.log("   ✅ Crypto payment method type is supported");

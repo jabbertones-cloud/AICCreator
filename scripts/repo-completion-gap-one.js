@@ -241,7 +241,7 @@ function runGapForRepo(repoName, dryRun, options = {}) {
       if (code === "STRIPE_WEBHOOK_SECURITY_GAP") nextActions.push("Enforce Stripe webhook signature verification + idempotency");
       if (code === "TELNYX_SIGNATURE_VERIFY_MISSING") nextActions.push("Add Telnyx webhook signature verification");
       if (code === "MULTITENANT_BASELINE_MISSING") nextActions.push("Add tenant resolver and organization_id guardrails");
-      if (code === "FORBIDDEN_PATTERN") nextActions.push("Remove placeholder/fake patterns");
+      if (code === "FORBIDDEN_PATTERN") nextActions.push("Remove placeholder patterns");
     }
   }
 

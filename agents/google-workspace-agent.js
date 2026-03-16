@@ -3,7 +3,7 @@
 // Google Workspace — Gmail + Drive connector for claw-architect
 //
 // Uses the official `googleapis` npm package (OAuth2).
-// Designed for creator@example.com (or any Google Workspace account).
+// Designed for creator@yourdomain.com (or any Google Workspace account).
 //
 // ── One-time OAuth2 Setup ────────────────────────────────────────────────────
 //  1. Go to https://console.cloud.google.com
@@ -30,7 +30,7 @@
 // CLI usage:
 //   node agents/google-workspace-agent.js --auth
 //   node agents/google-workspace-agent.js --cmd gmail-list --limit 10
-//   node agents/google-workspace-agent.js --cmd gmail-send --to bob@example.com \
+//   node agents/google-workspace-agent.js --cmd gmail-send --to bob@yourdomain.com \
 //     --subject "Hello" --body "Hey there"
 //   node agents/google-workspace-agent.js --cmd drive-list --folder root
 //   node agents/google-workspace-agent.js --cmd drive-search --query "SkynPatch"
@@ -328,7 +328,7 @@ async function runAuthFlow() {
   console.log('\n🔐 Google Workspace OAuth2 Setup\n');
   console.log('1. Open this URL in your browser:');
   console.log(`\n   ${url}\n`);
-  console.log('2. Sign in as creator@example.com');
+  console.log('2. Sign in as creator@yourdomain.com');
   console.log('3. Allow permissions');
   console.log('4. Copy the authorization code\n');
 

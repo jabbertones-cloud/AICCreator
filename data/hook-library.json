@@ -1,0 +1,967 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-03-07T00:00:00Z",
+  "total": 120,
+  "hooks": [
+    {
+      "id": "curiosity-001",
+      "text": "Most creators don't know this {topic} trick exists.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "youtube", "instagram"],
+      "score": 0.92
+    },
+    {
+      "id": "curiosity-002",
+      "text": "The secret to {topic} nobody talks about.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.91
+    },
+    {
+      "id": "curiosity-003",
+      "text": "What {topic} experts won't tell you.",
+      "category": "curiosity",
+      "niche": "ai-tools",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.90
+    },
+    {
+      "id": "curiosity-004",
+      "text": "This {topic} discovery changes everything.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.89
+    },
+    {
+      "id": "curiosity-005",
+      "text": "Nobody's talking about this {topic} hack.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.88
+    },
+    {
+      "id": "curiosity-006",
+      "text": "This {topic} method is way too simple.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.87
+    },
+    {
+      "id": "curiosity-007",
+      "text": "The {topic} loophole creators use.",
+      "category": "curiosity",
+      "niche": "faceless",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.86
+    },
+    {
+      "id": "curiosity-008",
+      "text": "This {topic} trick went viral (here's why).",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.85
+    },
+    {
+      "id": "curiosity-009",
+      "text": "Top creators are hiding this {topic} secret.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.84
+    },
+    {
+      "id": "curiosity-010",
+      "text": "I found the {topic} cheat code.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.83
+    },
+    {
+      "id": "curiosity-011",
+      "text": "This {topic} fact will blow your mind.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.82
+    },
+    {
+      "id": "curiosity-012",
+      "text": "The {topic} truth nobody knows.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.81
+    },
+    {
+      "id": "curiosity-013",
+      "text": "This {topic} error costs creators millions.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.80
+    },
+    {
+      "id": "curiosity-014",
+      "text": "The {topic} hack that changed my life.",
+      "category": "curiosity",
+      "niche": "ai-tools",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.79
+    },
+    {
+      "id": "curiosity-015",
+      "text": "What {topic} really means (nobody gets it right).",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.78
+    },
+    {
+      "id": "curiosity-016",
+      "text": "This {topic} pattern is everywhere.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.77
+    },
+    {
+      "id": "curiosity-017",
+      "text": "The {topic} technique only 1% know about.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.76
+    },
+    {
+      "id": "curiosity-018",
+      "text": "This {topic} shortcut saves hours.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.75
+    },
+    {
+      "id": "curiosity-019",
+      "text": "The {topic} formula that works every time.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.74
+    },
+    {
+      "id": "curiosity-020",
+      "text": "This {topic} insight changed everything.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.73
+    },
+    {
+      "id": "curiosity-021",
+      "text": "The {topic} mindset shift you need.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.72
+    },
+    {
+      "id": "curiosity-022",
+      "text": "This {topic} reality will shock you.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.71
+    },
+    {
+      "id": "curiosity-023",
+      "text": "The {topic} strategy that's working in 2026.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.70
+    },
+    {
+      "id": "curiosity-024",
+      "text": "This {topic} detail changes everything.",
+      "category": "curiosity",
+      "niche": "ai-tools",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.69
+    },
+    {
+      "id": "curiosity-025",
+      "text": "The {topic} principle most creators miss.",
+      "category": "curiosity",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.68
+    },
+    {
+      "id": "urgency-001",
+      "text": "This {topic} window closes soon.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "youtube", "instagram"],
+      "score": 0.91
+    },
+    {
+      "id": "urgency-002",
+      "text": "Act now before {topic} changes.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.90
+    },
+    {
+      "id": "urgency-003",
+      "text": "Last chance to learn {topic} for free.",
+      "category": "urgency",
+      "niche": "ai-tools",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.89
+    },
+    {
+      "id": "urgency-004",
+      "text": "This {topic} opportunity won't wait.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.88
+    },
+    {
+      "id": "urgency-005",
+      "text": "Only 24 hours left for {topic} access.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.87
+    },
+    {
+      "id": "urgency-006",
+      "text": "The {topic} deal expires today.",
+      "category": "urgency",
+      "niche": "affiliate",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.86
+    },
+    {
+      "id": "urgency-007",
+      "text": "Before {topic} gets patched (watch now).",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.85
+    },
+    {
+      "id": "urgency-008",
+      "text": "Hurry: {topic} is going away.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.84
+    },
+    {
+      "id": "urgency-009",
+      "text": "This {topic} loophole won't last long.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.83
+    },
+    {
+      "id": "urgency-010",
+      "text": "Grab this {topic} before it's gone.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.82
+    },
+    {
+      "id": "urgency-011",
+      "text": "Limited time: {topic} access ends soon.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.81
+    },
+    {
+      "id": "urgency-012",
+      "text": "The {topic} deadline is tomorrow.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.80
+    },
+    {
+      "id": "urgency-013",
+      "text": "Get the {topic} secret while it's live.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.79
+    },
+    {
+      "id": "urgency-014",
+      "text": "This {topic} moment won't come again.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.78
+    },
+    {
+      "id": "urgency-015",
+      "text": "The {topic} window of opportunity closes at midnight.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.77
+    },
+    {
+      "id": "urgency-016",
+      "text": "Last batch: {topic} access (limited slots).",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.76
+    },
+    {
+      "id": "urgency-017",
+      "text": "Watch before {topic} gets removed.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.75
+    },
+    {
+      "id": "urgency-018",
+      "text": "This {topic} trick expires soon.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.74
+    },
+    {
+      "id": "urgency-019",
+      "text": "The {{topic}} free {topic} offer ends now.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.73
+    },
+    {
+      "id": "urgency-020",
+      "text": "Act fast before {topic} is gone forever.",
+      "category": "urgency",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.72
+    },
+    {
+      "id": "social_proof-001",
+      "text": "10,000 creators use this {topic} method.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.92
+    },
+    {
+      "id": "social_proof-002",
+      "text": "The {topic} strategy top earners swear by.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.91
+    },
+    {
+      "id": "social_proof-003",
+      "text": "95% of successful creators use {topic}.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.90
+    },
+    {
+      "id": "social_proof-004",
+      "text": "The {topic} method backed by data.",
+      "category": "social_proof",
+      "niche": "ai-tools",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.89
+    },
+    {
+      "id": "social_proof-005",
+      "text": "Trusted by 50K+ creators for {topic}.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.88
+    },
+    {
+      "id": "social_proof-006",
+      "text": "This {topic} system has 4.9/5 stars.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.87
+    },
+    {
+      "id": "social_proof-007",
+      "text": "The {topic} approach that's proven to work.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.86
+    },
+    {
+      "id": "social_proof-008",
+      "text": "Join thousands who mastered {topic}.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.85
+    },
+    {
+      "id": "social_proof-009",
+      "text": "This {topic} framework is industry-standard.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.84
+    },
+    {
+      "id": "social_proof-010",
+      "text": "Top brands recommend this {topic} strategy.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.83
+    },
+    {
+      "id": "social_proof-011",
+      "text": "The {topic} method endorsed by experts.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.82
+    },
+    {
+      "id": "social_proof-012",
+      "text": "100K+ users trust this {topic} approach.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.81
+    },
+    {
+      "id": "social_proof-013",
+      "text": "The {{topic}} {topic} choice of professionals.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.80
+    },
+    {
+      "id": "social_proof-014",
+      "text": "This {topic} solution powers leading creators.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.79
+    },
+    {
+      "id": "social_proof-015",
+      "text": "Proven: {topic} results from real users.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.78
+    },
+    {
+      "id": "social_proof-016",
+      "text": "The {{topic}} framework 25K creators love.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.77
+    },
+    {
+      "id": "social_proof-017",
+      "text": "Award-winning {topic} method.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.76
+    },
+    {
+      "id": "social_proof-018",
+      "text": "This {topic} strategy wins every time.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.75
+    },
+    {
+      "id": "social_proof-019",
+      "text": "The {topic} system Fortune 500 companies use.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.74
+    },
+    {
+      "id": "social_proof-020",
+      "text": "Verified: {topic} delivers real growth.",
+      "category": "social_proof",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.73
+    },
+    {
+      "id": "pain-001",
+      "text": "Struggling with {topic}? This fixes it.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.91
+    },
+    {
+      "id": "pain-002",
+      "text": "If {topic} is killing your growth, watch this.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.90
+    },
+    {
+      "id": "pain-003",
+      "text": "The {topic} problem that's costing you money.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.89
+    },
+    {
+      "id": "pain-004",
+      "text": "Tired of {{topic}} {topic} failures?",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.88
+    },
+    {
+      "id": "pain-005",
+      "text": "This {topic} issue stops most creators.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.87
+    },
+    {
+      "id": "pain-006",
+      "text": "Your {topic} isn't working? Here's why.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.86
+    },
+    {
+      "id": "pain-007",
+      "text": "The {{topic}} {topic} bottleneck nobody mentions.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.85
+    },
+    {
+      "id": "pain-008",
+      "text": "This {topic} mistake is hurting your channel.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.84
+    },
+    {
+      "id": "pain-009",
+      "text": "If {{topic}} {topic} is broken, you need this.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.83
+    },
+    {
+      "id": "pain-010",
+      "text": "The {topic} crisis every creator faces.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.82
+    },
+    {
+      "id": "pain-011",
+      "text": "This {topic} problem wastes your time.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.81
+    },
+    {
+      "id": "pain-012",
+      "text": "The {topic} breakdown nobody talks about.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.80
+    },
+    {
+      "id": "pain-013",
+      "text": "Your {topic} is probably broken (and here's the fix).",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.79
+    },
+    {
+      "id": "pain-014",
+      "text": "The {{topic}} {topic} pain point solved.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.78
+    },
+    {
+      "id": "pain-015",
+      "text": "This {topic} block is destroying your income.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.77
+    },
+    {
+      "id": "pain-016",
+      "text": "The {{topic}} {{topic}} {{topic}} issue preventing growth.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.76
+    },
+    {
+      "id": "pain-017",
+      "text": "This {topic} trap stops 90% of creators.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.75
+    },
+    {
+      "id": "pain-018",
+      "text": "The {topic} nightmare you probably have.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.74
+    },
+    {
+      "id": "pain-019",
+      "text": "This {{topic}} {topic} failure is common.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.73
+    },
+    {
+      "id": "pain-020",
+      "text": "The {topic} disaster you want to avoid.",
+      "category": "pain",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.72
+    },
+    {
+      "id": "benefit-001",
+      "text": "Double your {topic} results in 7 days.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.92
+    },
+    {
+      "id": "benefit-002",
+      "text": "The fastest way to grow with {topic}.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.91
+    },
+    {
+      "id": "benefit-003",
+      "text": "Get 3x results with this {topic} method.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.90
+    },
+    {
+      "id": "benefit-004",
+      "text": "This {topic} boost will transform your channel.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.89
+    },
+    {
+      "id": "benefit-005",
+      "text": "Unlock unlimited {topic} potential today.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.88
+    },
+    {
+      "id": "benefit-006",
+      "text": "The {topic} shortcut to massive growth.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.87
+    },
+    {
+      "id": "benefit-007",
+      "text": "This {topic} skill will pay forever.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.86
+    },
+    {
+      "id": "benefit-008",
+      "text": "Watch your {topic} revenue multiply.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.85
+    },
+    {
+      "id": "benefit-009",
+      "text": "This {topic} hack saves 10 hours/week.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.84
+    },
+    {
+      "id": "benefit-010",
+      "text": "The {topic} move that changed everything for me.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.83
+    },
+    {
+      "id": "benefit-011",
+      "text": "This {topic} strategy guarantees results.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.82
+    },
+    {
+      "id": "benefit-012",
+      "text": "Get the {{topic}} {{topic}} {{topic}} advantage now.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.81
+    },
+    {
+      "id": "benefit-013",
+      "text": "This {topic} system automates your success.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.80
+    },
+    {
+      "id": "benefit-014",
+      "text": "The {{topic}} {{topic}} solution you've been waiting for.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.79
+    },
+    {
+      "id": "benefit-015",
+      "text": "This {topic} method is a game-changer.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.78
+    },
+    {
+      "id": "benefit-016",
+      "text": "The {{topic}} {{topic}} path to wealth.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.77
+    },
+    {
+      "id": "benefit-017",
+      "text": "This {topic} advantage beats the competition.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.76
+    },
+    {
+      "id": "benefit-018",
+      "text": "The {{topic}} {{topic}} upgrade your mind needs.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.75
+    },
+    {
+      "id": "benefit-019",
+      "text": "This {topic} edge is your secret weapon.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.74
+    },
+    {
+      "id": "benefit-020",
+      "text": "The {{topic}} path to {topic} mastery.",
+      "category": "benefit",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.73
+    },
+    {
+      "id": "pattern_interrupt-001",
+      "text": "Stop doing {topic} this way.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["youtube", "tiktok", "instagram"],
+      "score": 0.90
+    },
+    {
+      "id": "pattern_interrupt-002",
+      "text": "Everything you know about {topic} is wrong.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.89
+    },
+    {
+      "id": "pattern_interrupt-003",
+      "text": "You've been doing {{topic}} {topic} backwards.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.88
+    },
+    {
+      "id": "pattern_interrupt-004",
+      "text": "This {topic} assumption is costing you.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.87
+    },
+    {
+      "id": "pattern_interrupt-005",
+      "text": "The {topic} lie most creators believe.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.86
+    },
+    {
+      "id": "pattern_interrupt-006",
+      "text": "You're probably wrong about {{topic}} {topic}.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.85
+    },
+    {
+      "id": "pattern_interrupt-007",
+      "text": "This {{topic}} {{topic}} myth is false.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.84
+    },
+    {
+      "id": "pattern_interrupt-008",
+      "text": "The {{topic}} {{topic}} contradiction nobody sees.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.83
+    },
+    {
+      "id": "pattern_interrupt-009",
+      "text": "This {{topic}} {{topic}} paradox changes everything.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.82
+    },
+    {
+      "id": "pattern_interrupt-010",
+      "text": "The {{topic}} {{topic}} inversion that works.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.81
+    },
+    {
+      "id": "pattern_interrupt-011",
+      "text": "This {{topic}} {{topic}} reversal blows minds.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.80
+    },
+    {
+      "id": "pattern_interrupt-012",
+      "text": "The {{topic}} {{topic}} opposite is true.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["tiktok", "instagram"],
+      "score": 0.79
+    },
+    {
+      "id": "pattern_interrupt-013",
+      "text": "This {{topic}} {{topic}} flip is genius.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["youtube", "tiktok"],
+      "score": 0.78
+    },
+    {
+      "id": "pattern_interrupt-014",
+      "text": "The {{topic}} {{topic}} swap nobody tries.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["tiktok", "youtube"],
+      "score": 0.77
+    },
+    {
+      "id": "pattern_interrupt-015",
+      "text": "This {{topic}} {{topic}} flip-flop works.",
+      "category": "pattern_interrupt",
+      "niche": "general",
+      "platform": ["instagram", "tiktok"],
+      "score": 0.76
+    }
+  ]
+}

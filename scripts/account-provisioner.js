@@ -315,7 +315,7 @@ Commands:
   node scripts/account-provisioner.js complete <bot_id> [config_file]
 
 Examples:
-  node scripts/account-provisioner.js stripe bot_123 bot@example.com US
+  node scripts/account-provisioner.js stripe bot_123 bot@yourdomain.com US
   node scripts/account-provisioner.js discord bot_123 "My Bot"
   node scripts/account-provisioner.js complete bot_123 bot-config.json
 

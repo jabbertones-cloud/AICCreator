@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make AI Videos That Work</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-surface: #141414;
+            --bg-elevated: #1c1c1c;
+            --bg-input: #0f0f0f;
+            --border: #2a2a2a;
+            --border-focus: #3b82f6;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --accent-subtle: rgba(59, 130, 246, 0.1);
+            --purple: #a855f7;
+            --purple-subtle: rgba(168, 85, 247, 0.1);
+            --success: #10b981;
+            --success-subtle: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-subtle: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-subtle: rgba(239, 68, 68, 0.1);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            padding: 0 32px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+            flex-shrink: 0;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .time-display {
+            font-family: 'SF Mono', ui-monospace, monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* TAB BAR */
+        .tab-bar {
+            display: flex;
+            align-items: center;
+            height: 48px;
+            padding: 0 32px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+            gap: 32px;
+            flex-shrink: 0;
+        }
+
+        .tab {
+            position: relative;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color var(--transition);
+            border: none;
+            background: none;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 1px 1px 0 0;
+        }
+
+        /* MAIN CONTENT */
+        .main-container {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* GRID LAYOUTS */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .two-column-55-45 {
+            display: grid;
+            grid-template-columns: 55% 45%;
+            gap: 24px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        /* CARD */
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+
+        .card:hover {
+            background: var(--bg-elevated);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* FORM ELEMENTS */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .input {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            transition: all var(--transition);
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+
+        .input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        select.input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a1a1aa' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
+        }
+
+        /* BUTTONS */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .button-primary:hover {
+            background: linear-gradient(135deg, var(--accent-hover) 0%, #3b82f6 100%);
+            box-shadow: var(--shadow-md);
+        }
+
+        .button-primary:active {
+            transform: scale(0.98);
+        }
+
+        .button-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .button-secondary:hover {
+            background: var(--bg-elevated);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .button-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* TOGGLE PILLS */
+        .content-types {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-pill {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            border-radius: 20px;
+        }
+
+        .toggle-pill:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .toggle-pill.active {
+            background: var(--accent-subtle);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-elevated);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border-radius: 2px;
+            transition: width var(--transition);
+        }
+
+        /* STATUS BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: var(--radius-md);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            width: fit-content;
+        }
+
+        .badge-success {
+            background: var(--success-subtle);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: var(--warning-subtle);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: var(--danger-subtle);
+            color: var(--danger);
+        }
+
+        .badge-secondary {
+            background: rgba(161, 161, 170, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .status-dot-badge {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* STEP GRID */
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .step-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .step-pill.completed {
+            background: var(--success-subtle);
+            border-color: var(--success);
+        }
+
+        .step-pill.failed {
+            background: var(--danger-subtle);
+            border-color: var(--danger);
+        }
+
+        .step-pill.skipped {
+            background: rgba(113, 113, 122, 0.1);
+            border-color: var(--text-tertiary);
+        }
+
+        .step-icon {
+            font-size: 18px;
+        }
+
+        .step-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        /* GENERATION STATUS */
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            flex: 0 0 100px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .status-progress {
+            flex: 1;
+        }
+
+        .status-count {
+            flex: 0 0 60px;
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'SF Mono', ui-monospace, monospace;
+        }
+
+        /* TABLE */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            padding: 12px 0;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-tertiary);
+        }
+
+        .table td {
+            padding: 12px 0;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background var(--transition);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .table tbody tr.winner {
+            border-left: 3px solid var(--success);
+            padding-left: 0;
+        }
+
+        /* MINI CARDS */
+        .mini-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mini-card-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-tertiary);
+        }
+
+        .mini-card-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mini-card-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* TREND TRIGGER */
+        .trend-gauge {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .gauge-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+            border-radius: 3px;
+        }
+
+        /* CONTENT CARD */
+        .content-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .content-preview {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .two-column-55-45 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+
+        /* PLACEHOLDER STATE */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* ── INFO BUTTON + TOOLTIP SYSTEM ── */
+        .info-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            user-select: none;
+            flex-shrink: 0;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .info-btn:hover {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            transform: scale(1.1);
+        }
+        .info-tooltip {
+            position: fixed;
+            z-index: 9999;
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            max-width: 280px;
+            box-shadow: var(--shadow-lg);
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
+        .info-tooltip.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .info-tooltip-content {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .info-tooltip-text {
+            flex: 1;
+            word-wrap: break-word;
+            font-weight: 400;
+        }
+        .info-tooltip-close {
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .info-tooltip-close:hover { color: var(--text-primary); }
+
+        /* ── WELCOME CARD ── */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--accent-subtle) 0%, var(--purple-subtle) 100%);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+            animation: welcomeSlideIn 0.3s ease;
+        }
+        @keyframes welcomeSlideIn {
+            from { opacity: 0; transform: translateY(-16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .welcome-card h2 {
+            font-size: 16px;
+            color: var(--accent);
+            margin: 0;
+        }
+        .welcome-card-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 0;
+        }
+        .welcome-card-close:hover { color: var(--text-primary); }
+        .welcome-card p {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <span class="logo-text">AI Video Maker</span>
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusMsg">Connected</span>
+            </div>
+        </div>
+        <div class="top-bar-right">
+            <span>Last updated: <span id="lastUpdated">--:--</span></span>
+            <span class="time-display" id="currentTime">00:00 UTC</span>
+        </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+        <button class="tab active" onclick="switchTab('create')">Make Videos</button>
+        <button class="tab" onclick="switchTab('monitor')">Watch Progress</button>
+        <button class="tab" onclick="switchTab('results')">What You Got</button>
+        <button class="tab" onclick="switchTab('settings')">Your Setup</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+        <!-- MAKE VIDEOS TAB -->
+        <div id="create" class="tab-content active">
+            <!-- WELCOME CARD (first-time users) -->
+            <div id="welcomeContainer"></div>
+
+            <div class="two-column-55-45">
+                <!-- LEFT: LET'S MAKE YOUR VIDEO -->
+                <div class="card">
+                    <div class="card-title">Let's Make Your Video <span class="info-btn" data-info="Your whole project from start to finish. One campaign = one big idea turned into many pieces of finished content.">i</span></div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label class="form-label">What's your idea?</label>
+                            <input type="text" id="campaignTopicInput" class="input" placeholder="Like &quot;5 ways to save money&quot; or &quot;How to start a blog&quot;">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Pick your topic area <span class="info-btn" data-info="Your topic. The specific thing your audience cares about. Like 'making money' or 'AI tools.' Narrow beats broad.">i</span></label>
+                                <select id="campaignNiche" class="input">
+                                    <option>Computers, apps &amp; AI</option>
+                                    <option>Making &amp; managing money</option>
+                                    <option>Health &amp; wellness</option>
+                                    <option>Learning &amp; teaching</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">How many versions? <span class="info-btn" data-info="We make different versions of your video with different looks or words. You get to see which one people like best.">i</span></label>
+                                <input type="number" id="campaignVariants" class="input" min="1" max="10" value="3">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Video length (sec)</label>
+                                <input type="number" id="campaignDuration" class="input" min="15" max="90" value="60">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">How should we grab attention? <span class="info-btn" data-info="The first thing that grabs people's attention. A good hook makes them stop scrolling and watch your whole video.">i</span></label>
+                            <select id="campaignHookStyle" class="input">
+                                <option>Make people wonder</option>
+                                <option>"Do this now!" feeling</option>
+                                <option>Show what they'll gain</option>
+                                <option>Tell a real story</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">What should we make?</label>
+                            <div class="content-types">
+                                <button class="toggle-pill active" id="ctVideo" onclick="toggleContentType(this)">Video</button>
+                                <button class="toggle-pill active" id="ctTts" onclick="toggleContentType(this)">Spoken Voice <span class="info-btn" data-info="We turn your words into a human-sounding voice. No need to record yourself talking.">i</span></button>
+                                <button class="toggle-pill active" id="ctAvatar" onclick="toggleContentType(this)">AI Person <span class="info-btn" data-info="A fake person (made by AI) who talks on your video. Like having an actor but without hiring anyone.">i</span></button>
+                                <button class="toggle-pill" id="ctCarousel" onclick="toggleContentType(this)">Swipeable Images <span class="info-btn" data-info="A set of images people swipe through, like on Instagram. Great for tips or step-by-step guides.">i</span></button>
+                                <button class="toggle-pill" id="ctLanding" onclick="toggleContentType(this)">Sign-Up Page <span class="info-btn" data-info="A simple web page designed to get people to sign up or buy something. One goal: get them to say yes.">i</span></button>
+                                <button class="toggle-pill" id="ctRepurpose" onclick="toggleContentType(this)">Make New Versions <span class="info-btn" data-info="Take one video and turn it into many pieces. A long video becomes TikToks, posts, and clips. More content from less work.">i</span></button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 8px;">
+                            <button class="button button-primary" onclick="generateCampaignForm()" style="flex: 1;">
+                                <span>Make My Video</span>
+                            </button>
+                            <button class="button button-secondary" onclick="runResearch()" style="flex: 1;">
+                                <span>Get Ideas First</span>
+                            </button>
+                        </div>
+
+                        <div class="card" style="padding: 16px; margin-top: 12px; background: var(--bg-elevated); border-color: rgba(59,130,246,0.35);">
+                            <div class="card-title" style="margin-bottom: 10px;">Content Input (YouTube Intelligence)</div>
+                            <div class="card-content" style="gap: 10px;">
+                                <div class="form-group">
+                                    <label class="form-label">YouTube URL</label>
+                                    <input type="text" id="contentInputUrl" class="input" placeholder="https://www.youtube.com/watch?v=...">
+                                </div>
+                                <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+                                    <div class="form-group">
+                                        <label class="form-label">Comments</label>
+                                        <select id="contentInputComments" class="input">
+                                            <option value="true" selected>Include comments</option>
+                                            <option value="false">Metadata + transcript only</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Keyshots</label>
+                                        <input type="number" id="contentInputKeyshots" class="input" min="0" max="24" value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Full analysis</label>
+                                        <select id="contentInputFullAnalysis" class="input">
+                                            <option value="false" selected>Fast (metadata + transcript)</option>
+                                            <option value="true">Full (Whisper + scene + OCR)</option>
+                                        </select>
+                                        <small class="form-hint" style="display:block;margin-top:2px;">Full analysis can take several minutes; uses .venv-hook-analysis if present.</small>
+                                    </div>
+                                    <div class="form-group" style="justify-content: flex-end;">
+                                        <label class="form-label">Run</label>
+                                        <button class="button button-primary" id="contentInputRunBtn" onclick="runContentInput()">Ingest URL</button>
+                                    </div>
+                                </div>
+                                <div id="contentInputResult" class="mini-card">
+                                    <div class="mini-card-label">Latest ingestion</div>
+                                    <div class="mini-card-meta">No content input run yet.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: QUICK ACTIONS -->
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- START MAKING -->
+                    <div class="card">
+                        <div class="card-title">Start Making <span class="info-btn" data-info="Your step-by-step recipe. You give us an idea, and we turn it into a finished video by doing each step in order.">i</span></div>
+                        <button id="runBtn" class="button button-primary" onclick="runPipeline()" style="width: 100%; margin-bottom: 12px;">
+                            <span id="runIcon">▶</span>
+                            <span>Start Making Everything</span>
+                        </button>
+                        <div style="font-size: 12px; color: var(--text-secondary);">
+                            Last time we made something: <span id="lastRunVal" style="font-family: 'SF Mono', ui-monospace, monospace;">Not yet</span>
+                        </div>
+                    </div>
+
+                    <!-- YOUR CURRENT VIDEO -->
+                    <div class="card">
+                        <div class="card-title">Your Current Video</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);" id="campaignTopic">Nothing yet — make your first one above!</div>
+                            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                <span class="badge badge-secondary" id="campaignBadge">
+                                    <span class="status-dot-badge" style="background: var(--text-tertiary);"></span>
+                                    <span>Idle</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- YOUR VIDEO STEPS -->
+                    <div class="card">
+                        <div class="card-title">Your Video Steps</div>
+                        <div class="step-grid">
+                            <div class="step-pill" id="step1">
+                                <div class="step-icon">⚙</div>
+                                <div class="step-name">Setup</div>
+                            </div>
+                            <div class="step-pill" id="step2">
+                                <div class="step-icon">📝</div>
+                                <div class="step-name">Plan</div>
+                            </div>
+                            <div class="step-pill" id="step3">
+                                <div class="step-icon">🎯</div>
+                                <div class="step-name">Hook</div>
+                            </div>
+                            <div class="step-pill" id="step4">
+                                <div class="step-icon">🎬</div>
+                                <div class="step-name">Script</div>
+                            </div>
+                            <div class="step-pill" id="step5">
+                                <div class="step-icon">🗣</div>
+                                <div class="step-name">Voice</div>
+                            </div>
+                            <div class="step-pill" id="step6">
+                                <div class="step-icon">👤</div>
+                                <div class="step-name">AI Person</div>
+                            </div>
+                            <div class="step-pill" id="step7">
+                                <div class="step-icon">🎞</div>
+                                <div class="step-name">Footage</div>
+                            </div>
+                            <div class="step-pill" id="step8">
+                                <div class="step-icon">🎪</div>
+                                <div class="step-name">Mix</div>
+                            </div>
+                            <div class="step-pill" id="step9">
+                                <div class="step-icon">✅</div>
+                                <div class="step-name">Done!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MONITOR TAB -->
+        <div id="monitor" class="tab-content">
+            <div class="two-column-55-45">
+                <!-- LEFT: WHAT WE'RE MAKING -->
+                <div class="card">
+                    <div class="card-title">What We're Making Right Now</div>
+                    <div class="card-content">
+                        <div class="status-row">
+                            <div class="status-label">Voice <span class="info-btn" data-info="We turn your words into a human-sounding voice. No need to record yourself talking.">i</span></div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="ttsProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="ttsGen">0</span>/<span id="ttsFail">0</span></div>
+                        </div>
+                        <div class="status-row">
+                            <div class="status-label">Footage <span class="info-btn" data-info="The videos and pictures that go behind the voice. They help show what you're talking about and keep people watching.">i</span></div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="brollProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="brollGen">0</span>/<span id="brollFail">0</span></div>
+                        </div>
+                        <div class="status-row">
+                            <div class="status-label">Putting It Together</div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="clipsProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="clipsAssem">0</span>/<span id="clipsFail">0</span></div>
+                        </div>
+                        <div class="status-row">
+                            <div class="status-label">AI Person</div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="avProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="avGen">0</span>/<span id="avFail">0</span></div>
+                        </div>
+                        <div class="status-row">
+                            <div class="status-label">Swipeable Images</div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="carProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="carGen">0</span>/<span id="carFail">0</span></div>
+                        </div>
+                        <div class="status-row">
+                            <div class="status-label">Sign-Up Page</div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="lpProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="lpGen">0</span>/<span id="lpFail">0</span></div>
+                        </div>
+                        <div class="status-row">
+                            <div class="status-label">New Versions</div>
+                            <div class="status-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;" id="repProg"></div>
+                                </div>
+                            </div>
+                            <div class="status-count"><span id="repProc">0</span>/<span id="repFail">0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PIPELINE STEPS TABLE -->
+                <div class="card">
+                    <div class="card-title">What's Happening</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>What We're Doing</th>
+                                <th>How It's Going</th>
+                                <th>How Long</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Getting ready</td>
+                                <td><span class="badge badge-success"><span class="status-dot-badge" style="background: var(--success);"></span> Done</span></td>
+                                <td><span style="font-family: 'SF Mono', ui-monospace, monospace;">2.3s</span></td>
+                            </tr>
+                            <tr>
+                                <td>Looking things up</td>
+                                <td><span class="badge badge-success"><span class="status-dot-badge" style="background: var(--success);"></span> Done</span></td>
+                                <td><span style="font-family: 'SF Mono', ui-monospace, monospace;">8.1s</span></td>
+                            </tr>
+                            <tr>
+                                <td>Making your hook</td>
+                                <td><span class="badge badge-success"><span class="status-dot-badge" style="background: var(--success);"></span> Done</span></td>
+                                <td><span style="font-family: 'SF Mono', ui-monospace, monospace;">4.7s</span></td>
+                            </tr>
+                            <tr>
+                                <td>Writing the script</td>
+                                <td><span class="badge badge-secondary"><span class="status-dot-badge" style="background: var(--text-tertiary);"></span> Skipped</span></td>
+                                <td><span style="font-family: 'SF Mono', ui-monospace, monospace;">--</span></td>
+                            </tr>
+                            <tr>
+                                <td>Making the voice</td>
+                                <td><span class="badge badge-secondary"><span class="status-dot-badge" style="background: var(--text-tertiary);"></span> Waiting</span></td>
+                                <td><span style="font-family: 'SF Mono', ui-monospace, monospace;">--</span></td>
+                            </tr>
+                            <tr>
+                                <td>Making the AI person</td>
+                                <td><span class="badge badge-secondary"><span class="status-dot-badge" style="background: var(--text-tertiary);"></span> Waiting</span></td>
+                                <td><span style="font-family: 'SF Mono', ui-monospace, monospace;">--</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS TAB -->
+        <div id="results" class="tab-content">
+            <!-- A/B SCOREBOARD -->
+            <div class="card">
+                <div class="card-title">Which Version Won? <span class="info-btn" data-info="We made different versions of your video. Here you can see which one people liked best. Higher score = better video.">i</span></div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Version</th>
+                            <th>Opening Line</th>
+                            <th>People Stayed</th>
+                            <th>People Clicked</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="winner">
+                            <td><strong>Variant A</strong></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">Wait until the last second...</span></td>
+                            <td>87%</td>
+                            <td>12.3%</td>
+                            <td><strong id="winnerScore">94</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Variant B</strong></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">You won't believe what...</span></td>
+                            <td>71%</td>
+                            <td>8.9%</td>
+                            <td><strong id="winnerVal">78</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Variant C</strong></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">This one simple trick...</span></td>
+                            <td>65%</td>
+                            <td>7.2%</td>
+                            <td><strong>71</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- GENERATED CONTENT -->
+            <div style="margin-top: 24px;">
+                <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 16px;">What We Made</div>
+                <div class="grid-3" id="generatedContentContainer">
+                    <div class="content-card">
+                        <div style="font-weight: 600; font-size: 13px; color: var(--accent);">Variant A</div>
+                        <div class="content-preview">"Did you know that 92% of users never scroll past the first 3 seconds? The secret to viral content lies in that crucial window..."</div>
+                        <div class="content-actions">
+                            <button class="button button-small button-secondary" style="flex: 1;">Watch</button>
+                            <button class="button button-small button-secondary" style="flex: 1;">Save It</button>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <div style="font-weight: 600; font-size: 13px; color: var(--purple);">Variant B</div>
+                        <div class="content-preview">"Stop wasting time on content that doesn't convert. In the next 60 seconds, you'll discover the exact hook formula that professionals use..."</div>
+                        <div class="content-actions">
+                            <button class="button button-small button-secondary" style="flex: 1;">Watch</button>
+                            <button class="button button-small button-secondary" style="flex: 1;">Save It</button>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <div style="font-weight: 600; font-size: 13px; color: var(--success);">Variant C</div>
+                        <div class="content-preview">"Imagine if your content could reach 10x more people. It's not magic—it's psychology. Here's the three-part formula that changes everything..."</div>
+                        <div class="content-actions">
+                            <button class="button button-small button-secondary" style="flex: 1;">Watch</button>
+                            <button class="button button-small button-secondary" style="flex: 1;">Save It</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TREND TRIGGER -->
+            <div style="margin-top: 24px;">
+                <div class="card" style="max-width: 400px; margin-left: auto;">
+                    <div class="card-title">Trending Right Now</div>
+                    <div class="mini-card-label" style="margin-bottom: 4px;">Hot topic</div>
+                    <div class="mini-card-value" id="trendTriggerTopic">AI Automation</div>
+                    
+                    <div style="margin: 12px 0;"></div>
+                    
+                    <div class="mini-card-label" style="margin-bottom: 4px;">How hot is it?</div>
+                    <div class="trend-gauge">
+                        <div class="gauge-fill" id="trendGauge" style="width: 75%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                        <span class="mini-card-value" id="trendScoreLabel">75</span>
+                        <span class="mini-card-meta">People want this</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <div class="card" style="max-width: 600px;">
+                <div class="card-title">Your Setup</div>
+                <div class="empty-state">
+                    <div class="empty-state-title">We're Adding Settings Soon</div>
+                    <p>You'll be able to pick your AI model and save your stuff exactly how you want it. Stay tuned!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "/api/aicc";
+
+        // Current state
+        let currentTab = 'create';
+        let autoRefreshInterval = null;
+
+        // ── INFO BUTTON TOOLTIP SYSTEM ──
+        document.addEventListener('click', function(e) {
+            var isBtn = e.target.classList.contains('info-btn');
+            var isClose = e.target.classList.contains('info-tooltip-close');
+            if (isBtn) {
+                e.stopPropagation();
+                // Close all open tooltips first
+                document.querySelectorAll('.info-tooltip.visible').forEach(function(t) { t.classList.remove('visible'); });
+                var existing = e.target.nextElementSibling;
+                if (existing && existing.classList.contains('info-tooltip')) {
+                    existing.classList.add('visible');
+                    // Position it
+                    var rect = e.target.getBoundingClientRect();
+                    existing.style.position = 'fixed';
+                    existing.style.left = Math.max(8, Math.min(rect.left - 40, window.innerWidth - 296)) + 'px';
+                    existing.style.top = (rect.bottom + 8) + 'px';
+                } else {
+                    // Create tooltip dynamically from data-info attribute
+                    var text = e.target.getAttribute('data-info');
+                    if (!text) return;
+                    var tip = document.createElement('div');
+                    tip.className = 'info-tooltip visible';
+                    tip.innerHTML = '<div class="info-tooltip-content"><div class="info-tooltip-text">' + text + '</div><button class="info-tooltip-close">&times;</button></div>';
+                    tip.style.position = 'fixed';
+                    var r = e.target.getBoundingClientRect();
+                    tip.style.left = Math.max(8, Math.min(r.left - 40, window.innerWidth - 296)) + 'px';
+                    tip.style.top = (r.bottom + 8) + 'px';
+                    document.body.appendChild(tip);
+                }
+            } else if (isClose) {
+                var tooltip = e.target.closest('.info-tooltip');
+                if (tooltip) tooltip.classList.remove('visible');
+            } else {
+                document.querySelectorAll('.info-tooltip.visible').forEach(function(t) { t.classList.remove('visible'); });
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') document.querySelectorAll('.info-tooltip.visible').forEach(function(t) { t.classList.remove('visible'); });
+        });
+
+        // ── WELCOME CARD ──
+        function renderWelcomeCard() {
+            if (localStorage.getItem('aicc-welcome-dismissed')) return;
+            var container = document.getElementById('welcomeContainer');
+            if (!container) return;
+            container.innerHTML = '<div class="welcome-card">' +
+                '<div class="welcome-card-header">' +
+                '<h2>Welcome! Let\'s make something great.</h2>' +
+                '<button class="welcome-card-close" onclick="dismissWelcome()">&times;</button>' +
+                '</div>' +
+                '<p>You\'re about to make amazing videos with AI. Pick a topic, choose your style, and we\'ll handle the rest. It takes just a few minutes to get started. No camera needed!</p>' +
+                '</div>';
+        }
+        function dismissWelcome() {
+            localStorage.setItem('aicc-welcome-dismissed', 'true');
+            var card = document.querySelector('.welcome-card');
+            if (card) { card.style.animation = 'welcomeSlideIn 0.3s ease reverse'; setTimeout(function() { card.remove(); }, 300); }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderWelcomeCard();
+            updateTime();
+            setInterval(updateTime, 1000);
+            startAutoRefresh();
+            fetchData();
+            loadLatestContentInput();
+        });
+
+        // TIME MANAGEMENT
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${mins} UTC`;
+        }
+
+        // API CALLS
+        function fetchData() {
+            console.log('Fetching dashboard data...');
+            updateDashboard();
+        }
+
+        async function loadLatestContentInput() {
+            try {
+                const res = await fetch(API_BASE + '/content-input/latest');
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && data.report) {
+                    renderContentInputResult(data.report);
+                }
+            } catch (err) {
+                console.warn('Could not load latest content input report:', err);
+            }
+        }
+
+        function updateDashboard() {
+            // Simulate API response with demo data
+            const demoData = {
+                status: 'connected',
+                lastUpdate: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                generation: {
+                    tts: { done: 8, total: 10 },
+                    broll: { done: 6, total: 10 },
+                    clips: { done: 5, total: 10 },
+                    avatar: { done: 3, total: 10 },
+                    carousel: { done: 2, total: 10 },
+                    landing: { done: 1, total: 10 },
+                    repurpose: { done: 4, total: 10 }
+                },
+                activeCampaign: {
+                    topic: 'AI Content Automation',
+                    niche: 'Technology',
+                    variants: 3
+                }
+            };
+
+            updateGenerationStatus(demoData.generation);
+            setStatusDot('ok');
+            document.getElementById('lastUpdated').textContent = demoData.lastUpdate;
+        }
+
+        function updateGenerationStatus(data) {
+            // TTS
+            document.getElementById('ttsGen').textContent = data.tts.done;
+            document.getElementById('ttsFail').textContent = data.tts.total;
+            document.getElementById('ttsProg').style.width = (data.tts.done / data.tts.total * 100) + '%';
+
+            // B-Roll
+            document.getElementById('brollGen').textContent = data.broll.done;
+            document.getElementById('brollFail').textContent = data.broll.total;
+            document.getElementById('brollProg').style.width = (data.broll.done / data.broll.total * 100) + '%';
+
+            // Clips
+            document.getElementById('clipsAssem').textContent = data.clips.done;
+            document.getElementById('clipsFail').textContent = data.clips.total;
+            document.getElementById('clipsProg').style.width = (data.clips.done / data.clips.total * 100) + '%';
+
+            // Avatar
+            document.getElementById('avGen').textContent = data.avatar.done;
+            document.getElementById('avFail').textContent = data.avatar.total;
+            document.getElementById('avProg').style.width = (data.avatar.done / data.avatar.total * 100) + '%';
+
+            // Carousel
+            document.getElementById('carGen').textContent = data.carousel.done;
+            document.getElementById('carFail').textContent = data.carousel.total;
+            document.getElementById('carProg').style.width = (data.carousel.done / data.carousel.total * 100) + '%';
+
+            // Landing
+            document.getElementById('lpGen').textContent = data.landing.done;
+            document.getElementById('lpFail').textContent = data.landing.total;
+            document.getElementById('lpProg').style.width = (data.landing.done / data.landing.total * 100) + '%';
+
+            // Repurpose
+            document.getElementById('repProc').textContent = data.repurpose.done;
+            document.getElementById('repFail').textContent = data.repurpose.total;
+            document.getElementById('repProg').style.width = (data.repurpose.done / data.repurpose.total * 100) + '%';
+        }
+
+        function setStatusDot(status) {
+            const dot = document.getElementById('statusDot');
+            const msg = document.getElementById('statusMsg');
+            if (status === 'ok') {
+                dot.style.background = 'var(--success)';
+                msg.textContent = 'Connected';
+            } else if (status === 'warning') {
+                dot.style.background = 'var(--warning)';
+                msg.textContent = 'Processing';
+            } else if (status === 'error') {
+                dot.style.background = 'var(--danger)';
+                msg.textContent = 'Error';
+            }
+        }
+
+        // TAB SWITCHING
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            currentTab = tabName;
+        }
+
+        // FORM ACTIONS
+        function toggleContentType(el) {
+            el.classList.toggle('active');
+        }
+
+        function generateCampaignForm() {
+            const topic = document.getElementById('campaignTopicInput').value;
+            const niche = document.getElementById('campaignNiche').value;
+            const variants = document.getElementById('campaignVariants').value;
+
+            if (!topic) {
+                showStatus('error', 'Tell us what your video is about first!');
+                return;
+            }
+
+            showStatus('info', `Making your video about "${topic}"... this takes a minute`);
+            document.getElementById('campaignTopic').textContent = topic;
+            document.getElementById('campaignBadge').innerHTML = '<span class="status-dot-badge" style="background: var(--accent);"></span><span>' + niche + '</span>';
+
+            setTimeout(() => {
+                setStatusDot('ok');
+                showStatus('success', 'All done! Your video is ready.');
+                runCampaign();
+            }, 2000);
+        }
+
+        function runResearch() {
+            showStatus('info', 'Looking up great ideas for you...');
+            setStatusDot('warning');
+            setTimeout(() => {
+                setStatusDot('ok');
+                showStatus('success', 'Got it! We found some great stuff.');
+            }, 3000);
+        }
+
+        function runPipeline() {
+            const btn = document.getElementById('runBtn');
+            const icon = document.getElementById('runIcon');
+            
+            if (btn.disabled) return;
+            
+            btn.disabled = true;
+            icon.textContent = '⏸';
+            showStatus('info', 'Making your video... hang tight!');
+            setStatusDot('warning');
+
+            setTimeout(() => {
+                btn.disabled = false;
+                icon.textContent = '▶';
+                document.getElementById('lastRunVal').textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                setStatusDot('ok');
+                showStatus('success', 'Done! Your video is ready.');
+            }, 5000);
+        }
+
+        async function runContentInput() {
+            const urlEl = document.getElementById('contentInputUrl');
+            const commentsEl = document.getElementById('contentInputComments');
+            const keyshotsEl = document.getElementById('contentInputKeyshots');
+            const runBtn = document.getElementById('contentInputRunBtn');
+
+            const url = (urlEl.value || '').trim();
+            const includeComments = commentsEl.value === 'true';
+            const keyshots = Number(keyshotsEl.value || 0);
+            const fullAnalysis = document.getElementById('contentInputFullAnalysis').value === 'true';
+
+            if (!url || !/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(url)) {
+                showStatus('error', 'Paste a valid YouTube URL first.');
+                setStatusDot('error');
+                return;
+            }
+
+            runBtn.disabled = true;
+            const oldText = runBtn.textContent;
+            runBtn.textContent = 'Running...';
+            setStatusDot('warning');
+            showStatus('info', 'Running content input ingestion...');
+
+            try {
+                const res = await fetch(API_BASE + '/content-input/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, includeComments, keyshots, fullAnalysis })
+                });
+                const payload = await res.json();
+                if (!res.ok || !payload.ok) {
+                    throw new Error(payload.error || payload.stderr || 'Content input run failed');
+                }
+                renderContentInputResult(payload.report || {});
+                setStatusDot('ok');
+                showStatus('success', 'Content input complete.');
+            } catch (err) {
+                setStatusDot('error');
+                showStatus('error', 'Content input failed: ' + (err && err.message ? err.message : String(err)));
+            } finally {
+                runBtn.disabled = false;
+                runBtn.textContent = oldText || 'Ingest URL';
+            }
+        }
+
+        function renderContentInputResult(report) {
+            const container = document.getElementById('contentInputResult');
+            if (!container) return;
+            const row = report && Array.isArray(report.rows) ? report.rows[0] : null;
+            const ci = row && row.content_input ? row.content_input : null;
+            const hta = row && row.hook_transition_analysis ? row.hook_transition_analysis : null;
+            const cov = row && row.pipeline_coverage ? row.pipeline_coverage : null;
+            if (!ci && !hta) {
+                container.innerHTML =
+                    '<div class="mini-card-label">Latest ingestion</div>' +
+                    '<div class="mini-card-meta">No structured content report yet.</div>';
+                return;
+            }
+
+            const title = (ci && ci.title) || hta?.video_id || '(untitled)';
+            const transcriptLen = ((ci && ci.transcript) || '').length;
+            const commentsCount = Array.isArray(ci && ci.top_comments) ? ci.top_comments.length : 0;
+            const themes = Array.isArray(ci && ci.comment_themes) ? ci.comment_themes.slice(0, 6) : [];
+            const ctaCount = Array.isArray(ci && ci.cta_moments) ? ci.cta_moments.length : 0;
+            const hardCuts = (hta && hta.hard_cut_count) != null ? hta.hard_cut_count : null;
+            const transDensity = (hta && hta.transition_density_per_10s) != null ? hta.transition_density_per_10s : null;
+            const onScreen = Array.isArray(hta && hta.on_screen_text) ? hta.on_screen_text : [];
+            const pipeline = cov ? [cov.transcribe && 'transcribe', cov.segment_shots && 'scenes', cov.diarize_speakers && 'diarize', cov.ocr_on_screen_text && 'OCR'].filter(Boolean).join(', ') || '' : '';
+
+            let html = '<div class="mini-card-label">Latest ingestion</div>' +
+                '<div class="mini-card-value" style="font-size:13px;line-height:1.4;">' + escapeHtml(title) + '</div>' +
+                '<div class="mini-card-meta">Transcript: ' + transcriptLen + ' chars | Comments: ' + commentsCount + ' | CTA: ' + ctaCount + '</div>';
+            if (hardCuts != null || transDensity != null || pipeline) {
+                html += '<div class="mini-card-meta" style="margin-top:4px;">';
+                if (hardCuts != null) html += 'Cuts: ' + hardCuts;
+                if (transDensity != null) html += ' | Density: ' + transDensity + '/10s';
+                if (pipeline) html += ' | Pipeline: ' + escapeHtml(pipeline);
+                html += '</div>';
+            }
+            html += '<div class="mini-card-meta" style="margin-top:4px;">Themes: ' + (themes.length ? escapeHtml(themes.join(', ')) : '(none)') + '</div>';
+            if (onScreen.length) html += '<div class="mini-card-meta" style="margin-top:4px;">On-screen: ' + escapeHtml(onScreen.slice(0, 4).join('; ')) + '</div>';
+            container.innerHTML = html;
+        }
+
+        function runCampaign() {
+            updateDashboard();
+        }
+
+        function refreshData() {
+            fetchData();
+        }
+
+        // AUTO-REFRESH
+        function startAutoRefresh() {
+            autoRefreshInterval = setInterval(refreshData, 30000);
+        }
+
+        // UTILITIES
+        function showStatus(type, message) {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+</html>

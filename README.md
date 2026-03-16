@@ -15,15 +15,20 @@ It provides:
 npm install
 ```
 
-2. Build a campaign from current research inputs:
+2. Run the full autopilot (recommended) or build step-by-step:
 ```bash
+# Full pipeline (TTS, B-roll, clip-extractor, autopublish):
+npm run content-creator:autopilot
+
+# Or step-by-step:
 npm run content-creator:pipeline
 npm run aicc:campaign
+npm run aicc:clip-extractor
 ```
 
-3. Schedule distribution jobs:
+3. Schedule distribution jobs (uses clip manifest when available):
 ```bash
-npm run aicc:autopublish:schedule -- --video /absolute/path/to/final.mp4
+npm run aicc:autopublish:schedule
 ```
 
 4. Execute due scheduled posts:
@@ -36,15 +41,17 @@ npm run aicc:autopublish:run
 npm run aicc:ab:score
 ```
 
-One-command orchestration:
+One-command orchestration (no video generation; use autopilot for full flow):
 ```bash
-npm run aicc:system -- --topic "automated content creator" --niche ai-clone-news --variants 5 --video /absolute/path/to/final.mp4 --publish-due
+npm run aicc:system -- --topic "automated content creator" --niche ai-clone-news --variants 5 --publish-due
 ```
 
 ## Core Commands
 
+- `npm run content-creator:autopilot` — full pipeline (trends, campaign, TTS, B-roll, avatar, clip-extractor, autopublish)
 - `npm run content-creator:pipeline`
 - `npm run aicc:campaign`
+- `npm run aicc:clip-extractor`
 - `npm run aicc:autopublish:schedule`
 - `npm run aicc:autopublish:run`
 - `npm run aicc:ab:score`

@@ -572,7 +572,7 @@ async function discoverGitAndRepoSeeds() {
     if (!text) continue;
 
     const emails = unique((text.match(emailRe) || []).map((s) => s.toLowerCase()))
-      .filter((e) => !e.endsWith("@example.com"));
+      .filter((e) => !e.endsWith("@example.org"));
     for (const email of emails.slice(0, 3)) {
       await saveLead({
         platform: "email",

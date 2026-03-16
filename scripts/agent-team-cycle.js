@@ -143,7 +143,7 @@ function initAgentState(agents) {
     if (!fs.existsSync(soulPath)) {
       fs.writeFileSync(
         soulPath,
-        `# ${a.name} Soul\n\n- mission: keep ${a.writer_file} current and useful.\n- operating mode: deterministic first, then constrained synthesis.\n- non-goal: fake updates with no evidence.\n- success: each run appends concrete outcomes, blockers, and next actions.\n`
+        `# ${a.name} Soul\n\n- mission: keep ${a.writer_file} current and useful.\n- operating mode: deterministic first, then constrained synthesis.\n- non-goal: placeholder updates with no evidence.\n- success: each run appends concrete outcomes, blockers, and next actions.\n`
       );
     }
 

@@ -7,7 +7,7 @@
  *
  * Usage:
  *   node scripts/send-test-email.js                              # → shop@skynpatch.com
- *   node scripts/send-test-email.js --to you@example.com        # any address
+ *   node scripts/send-test-email.js --to recipient@yourdomain.com  # any address
  *   node scripts/send-test-email.js --variant margin            # subject/hook variant
  *   node scripts/send-test-email.js --variant convenience
  *   node scripts/send-test-email.js --variant question

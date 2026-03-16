@@ -1,0 +1,22 @@
+# requirements-hook-analysis.txt
+# Install with: pip install -r scripts/requirements-hook-analysis.txt
+#
+# For hook/transition analysis pipeline:
+# - capture/download: yt-dlp (Node invokes)
+# - segment shots: scenedetect
+# - transcribe: openai-whisper (fallback) or whisperx (optional upgrade)
+# - diarize: pyannote.audio (optional, needs HF token)
+# - OCR: easyocr (on-screen text)
+
+# Core (required for basic pipeline)
+scenedetect[opencv]>=0.6.0
+openai-whisper>=20231117
+easyocr>=1.7.0
+
+# Optional: WhisperX (better word-level timestamps, install after core)
+# pip install git+https://github.com/m-bain/whisperX.git
+
+# Optional: pyannote.audio (speaker diarization, needs HuggingFace token)
+# pip install pyannote.audio
+# Accept pyannote model license: https://huggingface.co/pyannote/speaker-diarization-3.1
+# Set HF_TOKEN in env

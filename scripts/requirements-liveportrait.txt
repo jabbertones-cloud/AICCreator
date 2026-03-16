@@ -1,0 +1,19 @@
+# requirements-liveportrait.txt
+# Install with: pip install -r scripts/requirements-liveportrait.txt
+# LivePortrait repo: https://github.com/KwaiYing/LivePortrait
+
+# Server wrapper
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.0.0
+
+# LivePortrait dependencies (also install from the repo's own requirements.txt)
+# cd ~/liveportrait && pip install -r requirements.txt
+torch>=2.1.0
+torchvision>=0.16.0
+numpy>=1.24.0
+opencv-python>=4.9.0
+imageio>=2.34.0
+imageio-ffmpeg>=0.4.9
+onnxruntime>=1.17.0     # for face detection
+# onnxruntime-gpu       # use instead of onnxruntime if on NVIDIA GPU

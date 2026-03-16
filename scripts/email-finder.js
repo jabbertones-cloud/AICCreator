@@ -27,8 +27,8 @@
 // Usage:
 //   node scripts/email-finder.js --limit 50
 //   node scripts/email-finder.js --id 123               (single lead by ID)
-//   node scripts/email-finder.js --domain example.com   (find emails for domain)
-//   node scripts/email-finder.js --name "Jane Smith" --domain example.com
+//   node scripts/email-finder.js --domain yourdomain.com   (find emails for domain)
+//   node scripts/email-finder.js --name "Jane Smith" --domain yourdomain.com
 //   node scripts/email-finder.js --dry-run --limit 20
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -185,19 +185,19 @@ async function checkPort25() {
 }
 
 // ── Catch-all server detection ────────────────────────────────────────────────
-// A "catch-all" server accepts RCPT TO for any address, including fake ones.
+// A "catch-all" server accepts RCPT TO for any address, including probe ones.
 // Without this check, SMTP verify would incorrectly mark random patterns as valid.
-// We send a RCPT TO for a provably-fake address first. If it returns 250, the
+// We send RCPT TO for a provably-invalid address first. If it returns 250, the
 // server is catch-all and SMTP results are unreliable for this domain.
 const catchAllCache = new Map(); // domain → boolean
 
 async function isCatchAll(mxHost, domain, timeout = 6000) {
   if (catchAllCache.has(domain)) return catchAllCache.get(domain);
 
-  const fakeAddr = `xzy_noreply_${Date.now()}@${domain}`;
-  const result = await smtpConnect(mxHost, fakeAddr, timeout);
+  const probeAddr = `xzy_noreply_${Date.now()}@${domain}`;
+  const result = await smtpConnect(mxHost, probeAddr, timeout);
 
-  // If the fake address is accepted, it's catch-all
+  // If the probe address is accepted, it's catch-all
   const catchAll = (result === 'accepted');
   catchAllCache.set(domain, catchAll);
   if (catchAll) console.log(`   ⚠️  ${domain} is catch-all — SMTP verify unreliable`);

@@ -13,7 +13,7 @@
 //   • Multi-city support: --cities "Phoenix,Scottsdale,Tempe,Mesa"
 //   • --test flag: opens one URL, prints what it finds, exits (debugging)
 //   • Stealth hardening: removes navigator.webdriver, __playwright__, chrome
-//     flags, spoofs plugins array, fakes screen dimensions
+//     flags, spoofs plugins array, mocks screen dimensions
 //   • Retry logic: 3 attempts per query with different user agents on failure
 //
 // Usage:

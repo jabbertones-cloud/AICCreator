@@ -101,31 +101,31 @@
   <div class="wrap">
     <div class="top">
       <div class="title">
-        <h1>Veritap Local Alternatives Lab</h1>
-        <p>Scan paid services in <span class="mono">veritap_2026</span>, replace with local-first modules, and keep drafts/simulations local.</p>
+        <h1>Find What You Can Run for Free</h1>
+        <p>See what tools you're paying for. Switch to free ones that run on your computer. Keep your drafts safe at home.</p>
       </div>
       <div class="key">
         <input id="apiKey" placeholder="ARCHITECT_API_KEY (optional)" />
-        <button id="refreshBtn">Refresh Scan</button>
+        <button id="refreshBtn">Check Again</button>
       </div>
     </div>
 
     <div class="card">
-      <h2>Coverage Snapshot</h2>
+      <h2>What You've Got</h2>
       <div class="kpis" id="kpis"></div>
     </div>
 
     <div class="grid" style="margin-top:12px;">
       <div class="card">
-        <h2>Detected Paid Services (Veritap)</h2>
+        <h2>Tools You're Paying For</h2>
         <table>
           <thead>
             <tr>
-              <th>Service</th>
-              <th>Current</th>
-              <th>Local replacement</th>
-              <th>Bonus</th>
-              <th>Savings</th>
+              <th>Tool</th>
+              <th>What you use now</th>
+              <th>Free option</th>
+              <th>Extra perks</th>
+              <th>You save</th>
             </tr>
           </thead>
           <tbody id="servicesTable"></tbody>
@@ -133,14 +133,14 @@
       </div>
 
       <div class="card">
-        <h2>Local AI (Ollama)</h2>
-        <label>Model</label>
+        <h2>Free AI on Your Computer</h2>
+        <label>Which AI to use</label>
         <input id="aiModel" placeholder="llama3" />
-        <label style="display:block;margin-top:8px;">Prompt</label>
-        <textarea id="aiPrompt" placeholder="Ask for copy, analysis, workflows, etc."></textarea>
+        <label style="display:block;margin-top:8px;">What to ask</label>
+        <textarea id="aiPrompt" placeholder="Ask anything — like 'write me a caption' or 'help me plan my week'"></textarea>
         <div style="display:flex;gap:8px;margin-top:8px;">
-          <button id="runAiBtn">Run Local AI</button>
-          <button class="secondary" id="loadActivityBtn">Refresh Activity</button>
+          <button id="runAiBtn">Ask AI</button>
+          <button class="secondary" id="loadActivityBtn">Check for Updates</button>
         </div>
         <pre id="aiOutput" class="activity" style="margin-top:8px; white-space:pre-wrap;"></pre>
       </div>
@@ -148,28 +148,28 @@
 
     <div class="grid" style="margin-top:12px;">
       <div class="card">
-        <h2>Email Draft Queue (Local)</h2>
+        <h2>Emails Saved Here</h2>
         <input id="emailTo" placeholder="to@example.com" />
         <input id="emailSubject" placeholder="Subject" style="margin-top:8px;" />
         <textarea id="emailBody" placeholder="Email body" style="margin-top:8px;"></textarea>
-        <button id="saveEmailDraftBtn">Save Email Draft</button>
+        <button id="saveEmailDraftBtn">Save This Email</button>
       </div>
 
       <div class="card">
-        <h2>SMS Draft Queue (Local)</h2>
+        <h2>Text Messages Saved Here</h2>
         <input id="smsTo" placeholder="+15551234567" />
         <textarea id="smsBody" placeholder="SMS body" style="margin-top:8px;"></textarea>
-        <button id="saveSmsDraftBtn">Save SMS Draft</button>
+        <button id="saveSmsDraftBtn">Save This Text</button>
       </div>
     </div>
 
     <div class="grid" style="margin-top:12px;">
       <div class="card">
-        <h2>Migration Phases</h2>
+        <h2>Steps to Switch Over</h2>
         <div id="phasePlan" class="activity"></div>
       </div>
       <div class="card">
-        <h2>Recent Local Activity</h2>
+        <h2>What Just Happened</h2>
         <div id="activity" class="activity"></div>
       </div>
     </div>
@@ -256,7 +256,7 @@
         renderServices(scan);
         renderPhasePlan(scan);
       } catch (e) {
-        alert(`Scan failed: ${e.message}`);
+        alert(`Hmm, that didn't work: ${e.message}`);
       }
     }
 
@@ -265,7 +265,7 @@
         const data = await apiGet("/api/local-alternatives/activity?limit=40");
         renderActivity(data);
       } catch (e) {
-        document.getElementById("activity").textContent = `Activity load failed: ${e.message}`;
+        document.getElementById("activity").textContent = `Couldn't load your recent stuff: ${e.message}`;
       }
     }
 
@@ -275,7 +275,7 @@
     document.getElementById("runAiBtn").addEventListener("click", async () => {
       const prompt = document.getElementById("aiPrompt").value.trim();
       const model = document.getElementById("aiModel").value.trim();
-      if (!prompt) return alert("Prompt required");
+      if (!prompt) return alert("Type something to ask first");
       const out = document.getElementById("aiOutput");
       out.textContent = "Running local model...";
       try {
@@ -293,10 +293,10 @@
       const body = document.getElementById("emailBody").value.trim();
       try {
         await apiPost("/api/local-alternatives/email/draft", { to, subject, body });
-        alert("Email draft saved locally");
+        alert("Email saved!");
         refreshActivity();
       } catch (e) {
-        alert(`Save failed: ${e.message}`);
+        alert(`Oops, couldn't save: ${e.message}`);
       }
     });
 
@@ -305,10 +305,10 @@
       const message = document.getElementById("smsBody").value.trim();
       try {
         await apiPost("/api/local-alternatives/sms/draft", { to, message });
-        alert("SMS draft saved locally");
+        alert("Text message saved!");
         refreshActivity();
       } catch (e) {
-        alert(`Save failed: ${e.message}`);
+        alert(`Oops, couldn't save: ${e.message}`);
       }
     });
 

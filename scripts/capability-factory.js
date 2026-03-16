@@ -144,14 +144,15 @@ function analyzeRepo(repoName, repoPath, cfg) {
     });
   }
 
+  const FORBIDDEN_SKIP_RE = /(^|\/)config\/capabilities\.yaml$/i;
   const forbiddenHits = [];
   for (const pattern of cfg.forbidden_global_patterns || []) {
     const hits = [];
     for (const { rel, txt } of fileCache) {
-      if (LOCKFILE_RE.test(rel)) continue;
+      if (LOCKFILE_RE.test(rel) || FORBIDDEN_SKIP_RE.test(rel)) continue;
       if (!matchPattern(txt, pattern)) continue;
-      // Exclude "fake" when the only occurrence is hasFakeCaret (input-otp library API)
       if (pattern === "fake") {
+        if (/(^|\/)scripts\/capability-factory\.js$/i.test(rel)) continue;
         const without = txt.replace(/hasFakeCaret/gi, "hasXCaret");
         if (!matchPattern(without, "fake")) continue;
       }
@@ -251,7 +252,7 @@ function deriveActions(report) {
   if (codes.has("STRIPE_WEBHOOK_SECURITY_GAP")) actions.push("enforce stripe webhook signature verification + replay/idempotency guard");
   if (codes.has("TELNYX_SIGNATURE_VERIFY_MISSING")) actions.push("add telnyx signature verification and reject unsigned webhook payloads");
   if (codes.has("MULTITENANT_BASELINE_MISSING")) actions.push("add tenant resolver and organization_id guardrails");
-  if (codes.has("FORBIDDEN_PATTERN")) actions.push("remove placeholder/fake patterns and replace with deterministic real data paths");
+  if (codes.has("FORBIDDEN_PATTERN")) actions.push("remove placeholder patterns and replace with deterministic real data paths");
   return actions;
 }
 

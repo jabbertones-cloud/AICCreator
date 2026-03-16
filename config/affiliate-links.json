@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "default_disclosure": "#ad #sponsored",
+  "platforms": {
+    "tiktok": {
+      "ai-clone-news": "https://bit.ly/aicc-ai-stack",
+      "viral-faceless": "https://bit.ly/aicc-faceless-pack",
+      "product-ads": "https://bit.ly/aicc-product-tools",
+      "ai-tools-review": "https://bit.ly/aicc-tools-review",
+      "youtube-faceless": "https://bit.ly/aicc-yt-faceless",
+      "tiktok-affiliate": "https://bit.ly/aicc-tiktok-aff"
+    },
+    "instagram": {
+      "ai-clone-news": "https://bit.ly/aicc-ai-stack-ig",
+      "viral-faceless": "https://bit.ly/aicc-faceless-ig",
+      "product-ads": "https://bit.ly/aicc-product-ig",
+      "ai-tools-review": "https://bit.ly/aicc-tools-ig",
+      "youtube-faceless": "https://bit.ly/aicc-yt-ig",
+      "tiktok-affiliate": "https://bit.ly/aicc-tiktok-ig"
+    },
+    "youtube": {
+      "ai-clone-news": "https://bit.ly/aicc-ai-stack-yt",
+      "viral-faceless": "https://bit.ly/aicc-faceless-yt",
+      "product-ads": "https://bit.ly/aicc-product-yt",
+      "ai-tools-review": "https://bit.ly/aicc-tools-yt",
+      "youtube-faceless": "https://bit.ly/aicc-yt-yt",
+      "tiktok-affiliate": "https://bit.ly/aicc-tiktok-yt"
+    },
+    "pinterest": {
+      "ai-clone-news": "https://bit.ly/aicc-ai-stack-pin",
+      "viral-faceless": "https://bit.ly/aicc-faceless-pin",
+      "product-ads": "https://bit.ly/aicc-product-pin",
+      "ai-tools-review": "https://bit.ly/aicc-tools-pin",
+      "youtube-faceless": "https://bit.ly/aicc-yt-pin",
+      "tiktok-affiliate": "https://bit.ly/aicc-tiktok-pin"
+    }
+  },
+  "utm_defaults": {
+    "utm_medium": "social",
+    "utm_source_map": {
+      "tiktok": "tiktok",
+      "instagram": "instagram",
+      "youtube": "youtube",
+      "pinterest": "pinterest"
+    }
+  }
+}

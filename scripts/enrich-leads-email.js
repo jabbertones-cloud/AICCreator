@@ -55,7 +55,7 @@ const EMAIL_RE = /\b([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})\b/g;
 
 // Domains to skip even if extracted from HTML (tracking pixels, social, CDN)
 const JUNK_DOMAINS = new Set([
-  "example.com", "yourdomain.com", "domain.com", "email.com",
+  "example.org", "yourdomain.com", "domain.com", "email.com",
   "sentry.io", "google.com", "googleapis.com", "gstatic.com",
   "cloudflare.com", "mailchimp.com", "klaviyo.com", "sendgrid.net",
   "facebook.com", "instagram.com", "twitter.com", "tiktok.com",

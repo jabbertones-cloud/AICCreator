@@ -4332,6 +4332,23 @@ async function handleRequirementExpansionProofDashboard(req, res) {
   }
 }
 
+async function handleAICCDashboard(req, res) {
+  const dashboardPath = path.join(__dirname, "../dashboard/aicc-content-creator.html");
+  try {
+    const html = fs.readFileSync(dashboardPath, "utf8");
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+      "Pragma": "no-cache",
+      "Expires": "0",
+    });
+    res.end(html);
+  } catch (err) {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("AICC content creator dashboard not found");
+  }
+}
+
 function parseJsonObjectFromText(text) {
   const raw = String(text || "").trim();
   if (!raw) return null;
@@ -5009,6 +5026,9 @@ async function onRequest(req, res) {
   if (pathname === "/requirement-expansion-proof" || pathname === "/requirement-expansion-proof.html") {
     return handleRequirementExpansionProofDashboard(req, res);
   }
+  if (pathname === "/aicc" || pathname === "/aicc-creator" || pathname === "/aicc-content-creator" || pathname === "/aicc-content-creator.html") {
+    return handleAICCDashboard(req, res);
+  }
 
   if (pathname.startsWith("/api/")) {
     const queryApiKey = parsed.query?.api_key;
@@ -5135,6 +5155,104 @@ async function onRequest(req, res) {
       if (data.run === undefined) data.run = { ok: result.status === 0, code: result.status, stderr: (result.stderr || "").slice(0, 500) };
       return jsonResponse(res, 200, data);
     }
+
+    // ── AICC Content Creator Pipeline ──────────────────────────────────────────
+    if (method === "GET" && pathname === "/api/aicc/pipeline") {
+      function readReport(name) {
+        try {
+          const p = path.join(REPORTS_DIR, name);
+          return JSON.parse(fs.readFileSync(p, "utf8"));
+        } catch { return null; }
+      }
+      const autopilot  = readReport("autopilot-last-run.json") || {};
+      const campaign   = readReport("aicc-campaign-latest.json") || {};
+      const abResults  = readReport("aicc-ab-results-latest.json") || {};
+      const promoted   = readReport("aicc-promoted-variant-latest.json") || {};
+      const tts        = readReport("tts-manifest-latest.json") || {};
+      const broll      = readReport("broll-manifest-latest.json") || {};
+      const clips      = readReport("clip-manifest-latest.json") || {};
+      const avatars    = readReport("avatar-manifest-latest.json") || {};
+      const carousels  = readReport("carousel-manifest-latest.json") || {};
+      const repurpose  = readReport("content-repurpose-latest.json") || {};
+      const lps        = readReport("lp-manifest-latest.json") || {};
+      const trend      = readReport("trend-trigger-latest.json") || {};
+      // Hook library lives in data/
+      let hookLib = {};
+      try {
+        const hookPath = path.join(ROOT, "data", "hook-library.json");
+        hookLib = JSON.parse(fs.readFileSync(hookPath, "utf8"));
+      } catch {}
+      const countOk  = (manifest, field = "ok")  => (Array.isArray(manifest.variants) ? manifest.variants.filter(v => v[field] !== false).length : (manifest.generated || 0));
+      const countFail = (manifest, field = "ok") => (Array.isArray(manifest.variants) ? manifest.variants.filter(v => v[field] === false).length : (manifest.failed || 0));
+      return jsonResponse(res, 200, {
+        autopilot: {
+          ran_at:        autopilot.ran_at || null,
+          ended_at:      autopilot.ended_at || null,
+          steps_ok:      autopilot.steps_ok || 0,
+          steps_failed:  autopilot.steps_failed || 0,
+          steps_skipped: autopilot.steps_skipped || 0,
+          steps:         autopilot.steps || [],
+        },
+        campaign: {
+          topic:    campaign.topic || null,
+          niche:    campaign.niche || null,
+          variants: (campaign.variants || []).map(v => ({
+            id:       v.id,
+            hook:     v.hook || v.hook_text || "",
+            platform: v.platform || "",
+            score:    v.score || null,
+          })),
+        },
+        ab_results: {
+          variants: (abResults.variants || []).map(v => ({
+            id:      v.id,
+            score:   v.score || 0,
+            metrics: v.metrics || {},
+          })),
+          winner: promoted.id || abResults.winner || null,
+        },
+        tts:       { generated: countOk(tts),      failed: countFail(tts) },
+        broll:     { generated: countOk(broll),     failed: countFail(broll) },
+        clips:     { assembled: countOk(clips),     failed: countFail(clips) },
+        avatars:   { generated: countOk(avatars),   failed: countFail(avatars) },
+        carousels: { generated: countOk(carousels), failed: countFail(carousels) },
+        repurpose: { processed: countOk(repurpose), failed: countFail(repurpose) },
+        lps:       { generated: countOk(lps),       failed: countFail(lps) },
+        trend_trigger: {
+          topic:        trend.topic || null,
+          niche:        trend.niche || null,
+          score:        trend.score || null,
+          triggered_at: trend.triggered_at || null,
+        },
+        hook_library: {
+          total:      hookLib.total || (hookLib.hooks ? hookLib.hooks.length : 0),
+          categories: hookLib.hooks
+            ? hookLib.hooks.reduce((acc, h) => { acc[h.category] = (acc[h.category] || 0) + 1; return acc; }, {})
+            : {},
+        },
+      });
+    }
+
+    if (method === "POST" && pathname === "/api/aicc/run") {
+      const autopilotScript = path.join(ROOT, "scripts", "content-creator-autopilot.js");
+      if (!fs.existsSync(autopilotScript)) {
+        return jsonResponse(res, 404, { error: "autopilot_script_not_found" });
+      }
+      const result = spawnSync("node", [autopilotScript], {
+        cwd: ROOT,
+        encoding: "utf8",
+        env: process.env,
+        timeout: 600000, // 10 min max
+      });
+      return jsonResponse(res, 200, {
+        ok:      result.status === 0,
+        code:    result.status,
+        stdout:  (result.stdout || "").slice(-2000),
+        stderr:  (result.stderr || "").slice(-1000),
+        ran_at:  new Date().toISOString(),
+      });
+    }
+    // ── End AICC ───────────────────────────────────────────────────────────────
 
     if (method === "GET" && pathname === "/api/masterpiece/summary") {
       const scout = readJsonSafe(path.join(__dirname, "..", "scripts", "reports", "dashboard-chatbot-repo-scout-latest.json")) || {};

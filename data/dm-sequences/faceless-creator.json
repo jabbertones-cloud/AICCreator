@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "sequence_id": "faceless-creator-3touch",
+  "description": "3-touch DM sequence for faceless content creator outreach",
+  "touches": [
+    {
+      "touch": 1,
+      "delay_days": 0,
+      "subject": "Quick value share",
+      "template": "Hey {name}, saw your content on {platform} — really resonated with the {topic} angle. I've been building a system that automates the whole faceless video workflow (research → script → voice → post). Happy to share the framework if you're interested. No pitch, just useful.",
+      "platform": ["instagram", "tiktok"],
+      "tone": "genuine, curious"
+    },
+    {
+      "touch": 2,
+      "delay_days": 3,
+      "subject": "Quick follow-up",
+      "template": "Hey {name} — following up from earlier. Dropped a new breakdown on {topic} that's been getting solid retention. Wanted to share it in case it's helpful for your next post. Let me know if you want the template.",
+      "platform": ["instagram", "tiktok"],
+      "tone": "value-first, no pressure"
+    },
+    {
+      "touch": 3,
+      "delay_days": 7,
+      "subject": "Last message",
+      "template": "Hey {name}, last message — totally understand if the timing isn't right. If you ever want to swap notes on {topic} automation or the faceless creator workflow, I'm around. Best of luck with the channel.",
+      "platform": ["instagram", "tiktok"],
+      "tone": "respectful close"
+    }
+  ],
+  "personalization_fields": ["name", "platform", "topic"],
+  "source": "aicc-campaign-engine niche_pack metadata"
+}

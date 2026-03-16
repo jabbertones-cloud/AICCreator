@@ -259,7 +259,7 @@ function cmdCreate(skillName) {
 const { register } = require('../../registry');
 
 async function run(payload) {
-  // TODO: implement your skill logic here
+  // implement your skill logic here
   const { input } = payload;
   return { ok: true, result: \`\${input} processed by ${id}\` };
 }

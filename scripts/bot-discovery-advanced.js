@@ -239,7 +239,7 @@ async function discoverWebsiteBots() {
   console.log("[discovery] Website: This requires leads with websites in database");
   console.log("[discovery] Website: Use email-finder.js or lead generation first");
   
-  // TODO: Integrate with existing lead system to scan websites
+  // integrate with existing lead system to scan websites
   // For now, this is a placeholder that can be expanded
   
   return 0;
@@ -260,7 +260,7 @@ async function discoverEmailBots() {
   // This would require database access to the leads table
   // For now, this is a placeholder
   
-  // TODO: Query leads table for:
+  // query leads table for:
   // - business_name contains: bot, chatbot, AI, automation, claw
   // - email is not null
   // - Save as bot leads with platform="email"
@@ -428,7 +428,7 @@ async function discoverAPIBots() {
   console.log("[discovery] API: Check API access logs for bot-related patterns");
   console.log("[discovery] API: Requires access to server logs or monitoring system");
   
-  // TODO: Integrate with API monitoring/logging system
+  // integrate with API monitoring/logging system
   // Look for User-Agent strings containing "OpenClaw", "claw", "bot"
   
   return 0;

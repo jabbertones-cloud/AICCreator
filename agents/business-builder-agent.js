@@ -24,7 +24,9 @@ function loadContext(...files) {
   const contextDir = path.join(__dirname, "../context");
   return files.map(f => {
     try {
-      const fpath = path.join(contextDir, f);
+      const safe = path.basename(String(f).replace(/[/\\]/g, ""));
+      if (!safe) return `\n--- [empty] ---`;
+      const fpath = path.join(contextDir, safe);
       return `\n---\n${fs.readFileSync(fpath, "utf8")}`;
     } catch (_) {
       return `\n--- [${f} not found] ---`;
@@ -36,7 +38,9 @@ function loadRules(...files) {
   const rulesDir = path.join(__dirname, "..", ".cursor", "rules");
   return files.map(f => {
     try {
-      const fpath = path.join(rulesDir, f);
+      const safe = path.basename(String(f).replace(/[/\\]/g, ""));
+      if (!safe) return `\n--- [empty] ---`;
+      const fpath = path.join(rulesDir, safe);
       return `\n---\n${fs.readFileSync(fpath, "utf8")}`;
     } catch (_) {
       return `\n--- [${f} not found] ---`;

@@ -14,7 +14,9 @@ npm run aicc:campaign
 
 3. Schedule or adjust publish queue:
 ```bash
-npm run aicc:autopublish:schedule -- --video /absolute/path/to/final.mp4
+npm run aicc:autopublish:schedule
+# Uses reports/clip-manifest-latest.json when --video not passed
+# Optional: --video /path/to/final.mp4 for single-video campaigns
 ```
 
 4. Execute scheduled posts:

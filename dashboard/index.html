@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClawdBot Architect Dashboard</title>
+  <title>Your Control Room</title>
   <style>
     :root {
       --bg: #0f1419;
@@ -502,16 +502,16 @@
 <body>
   <div class="layout">
     <header>
-      <h1>ClawdBot Architect</h1>
-      <p>Executive Mission Control for system lanes, queue orchestration, audit findings, and one-click recovery.</p>
+      <h1>Your Control Room</h1>
+      <p>Everything you need, all in one place</p>
       <div class="api-key-row">
         <input type="password" id="apiKey" placeholder="API Key (optional)" autocomplete="off" />
         <div class="quick-actions">
-          <button type="button" id="quickDiagnoseBtn">Diagnose</button>
-          <button type="button" id="quickFixBtn">Fix Top</button>
-          <button type="button" id="quickStatusBtn">Refresh Status</button>
-          <button type="button" id="quickE2eBtn">Run E2E</button>
-          <button type="button" id="quickRepoBtn">Run Repo Scan</button>
+          <button type="button" id="quickDiagnoseBtn">Check What's Wrong</button>
+          <button type="button" id="quickFixBtn">Fix the Big Stuff</button>
+          <button type="button" id="quickStatusBtn">Update Everything</button>
+          <button type="button" id="quickE2eBtn">Test It All</button>
+          <button type="button" id="quickRepoBtn">Check Your Code</button>
           <button type="button" id="quickResearchBtn">Regenerate Research</button>
           <button type="button" id="reduceLoadBtn" style="background: var(--warning); color: #fff; border-color: var(--warning);">💾 Reduce Local Load</button>
           <button type="button" id="resumeLoadBtn" style="background: var(--success); color: #fff; border-color: var(--success); display: none;">▶️ Resume Local Work</button>
@@ -536,15 +536,15 @@
         <button type="button" id="statusFixCycleBtn">Run Fix Cycle (bounded)</button>
       </div>
       <div class="tab-row">
-        <button type="button" class="tab-btn active" data-tab="overview">Overview</button>
-        <button type="button" class="tab-btn" data-tab="systems">Systems</button>
-        <button type="button" class="tab-btn" data-tab="agents">Agents</button>
-        <button type="button" class="tab-btn" data-tab="jobs_queue">Jobs / Queue</button>
-        <button type="button" class="tab-btn" data-tab="leads_credit">Leads / Credit</button>
-        <button type="button" class="tab-btn" data-tab="qa_e2e">QA / E2E</button>
-        <button type="button" class="tab-btn" data-tab="research_copy">Research / Copy</button>
-        <button type="button" class="tab-btn" data-tab="reports">Reports</button>
-        <button type="button" class="tab-btn" data-tab="bot_payments">Bot Payments</button>
+        <button type="button" class="tab-btn active" data-tab="overview">The Big Picture</button>
+        <button type="button" class="tab-btn" data-tab="systems">Everything Running</button>
+        <button type="button" class="tab-btn" data-tab="agents">Your Helpers</button>
+        <button type="button" class="tab-btn" data-tab="jobs_queue">What's Working</button>
+        <button type="button" class="tab-btn" data-tab="leads_credit">Your Balance</button>
+        <button type="button" class="tab-btn" data-tab="qa_e2e">Testing</button>
+        <button type="button" class="tab-btn" data-tab="research_copy">Writing Stuff</button>
+        <button type="button" class="tab-btn" data-tab="reports">See Results</button>
+        <button type="button" class="tab-btn" data-tab="bot_payments">Money Stuff</button>
         <button type="button" class="tab-btn" data-tab="history">History</button>
         <button type="button" class="tab-btn" data-tab="chat">Chat</button>
       </div>
