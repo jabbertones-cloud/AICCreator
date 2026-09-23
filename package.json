@@ -517,7 +517,7 @@
     "dotenv": "^17.3.1",
     "googleapis": "^171.4.0",
     "ioredis": "^5.9.3",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^4.3.2",
     "openai": "^4.98.0",
     "opengoat": "latest",
     "pdf-parse": "^1.1.1",
