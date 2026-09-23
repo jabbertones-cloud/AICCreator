@@ -509,7 +509,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "@modelcontextprotocol/server-postgres": "^0.6.2",
-    "@trigger.dev/sdk": "4.4.1",
+    "@trigger.dev/sdk": "4.6.4",
     "ajv": "^8.17.1",
     "better-sqlite3": "^11.6.0",
     "bullmq": "^5.70.1",
