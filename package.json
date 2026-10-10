@@ -512,7 +512,7 @@
     "@trigger.dev/sdk": "4.6.4",
     "ajv": "^8.17.1",
     "better-sqlite3": "^11.6.0",
-    "bullmq": "^5.70.1",
+    "bullmq": "^5.81.5",
     "discord.js": "^14.27.0",
     "dotenv": "^17.3.1",
     "googleapis": "^171.4.0",
@@ -525,6 +525,6 @@
     "playwright": "^1.58.2",
     "stripe": "^17.0.0",
     "telegraf": "^4.16.3",
-    "uuid": "^8.3.2"
+    "uuid": "^14.0.2"
   }
 }
