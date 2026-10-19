@@ -6,8 +6,6 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
-const { v4: uuidv4 } = require("uuid");
-const { google } = require("googleapis");
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
 const pg = require("../infra/postgres");
@@ -34,6 +32,18 @@ const SYSTEM_DASHBOARD_URLS = (process.env.SYSTEM_DASHBOARD_URLS || process.env.
   .filter(Boolean);
 
 let _routingColsEnsured = false;
+function uuidv4() {
+  return crypto.randomUUID();
+}
+
+function getGoogleApis() {
+  try {
+    return require("googleapis").google;
+  } catch (err) {
+    throw new Error("googleapis module is required for credit OAuth setup. Run npm install before using /v1/credit/oauth/* routes.");
+  }
+}
+
 async function ensureRoutingColumns() {
   if (_routingColsEnsured) return;
   await pg.query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS required_tags TEXT[] DEFAULT '{}'`);
@@ -71,6 +81,127 @@ function collectBody(req) {
     req.on("end", () => resolve(raw));
     req.on("error", reject);
   });
+}
+
+function collectBuffer(req, maxBytes = 75_000_000) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    req.on("data", (c) => {
+      size += c.length;
+      if (size > maxBytes) {
+        reject(new Error("payload_too_large"));
+        req.destroy();
+        return;
+      }
+      chunks.push(c);
+    });
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
+
+function parseContentDisposition(value) {
+  const out = {};
+  for (const part of String(value || "").split(";")) {
+    const [rawKey, ...rawValue] = part.trim().split("=");
+    const key = rawKey && rawKey.trim().toLowerCase();
+    if (!key || rawValue.length === 0) continue;
+    out[key] = rawValue.join("=").trim().replace(/^"|"$/g, "");
+  }
+  return out;
+}
+
+function parseMultipartFormData(req, body) {
+  const contentType = String(req.headers["content-type"] || "");
+  const boundaryMatch = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+  const boundary = boundaryMatch && (boundaryMatch[1] || boundaryMatch[2]);
+  if (!boundary) throw new Error("missing_multipart_boundary");
+
+  const delimiter = Buffer.from(`--${boundary}`);
+  const fields = {};
+  const files = [];
+  let cursor = 0;
+
+  while (cursor < body.length) {
+    let start = body.indexOf(delimiter, cursor);
+    if (start < 0) break;
+    start += delimiter.length;
+    if (body[start] === 45 && body[start + 1] === 45) break;
+    if (body[start] === 13 && body[start + 1] === 10) start += 2;
+
+    const headerEnd = body.indexOf(Buffer.from("\r\n\r\n"), start);
+    if (headerEnd < 0) break;
+    const rawHeaders = body.slice(start, headerEnd).toString("utf8");
+    let dataStart = headerEnd + 4;
+    let next = body.indexOf(delimiter, dataStart);
+    if (next < 0) break;
+    let dataEnd = next;
+    if (body[dataEnd - 2] === 13 && body[dataEnd - 1] === 10) dataEnd -= 2;
+
+    const headers = {};
+    for (const line of rawHeaders.split("\r\n")) {
+      const idx = line.indexOf(":");
+      if (idx > 0) headers[line.slice(0, idx).trim().toLowerCase()] = line.slice(idx + 1).trim();
+    }
+    const disposition = parseContentDisposition(headers["content-disposition"]);
+    const name = disposition.name;
+    const filename = disposition.filename;
+    const value = body.slice(dataStart, dataEnd);
+
+    if (name && filename) {
+      files.push({
+        field: name,
+        filename,
+        mime_type: headers["content-type"] || "application/octet-stream",
+        buffer: value,
+      });
+    } else if (name) {
+      const text = value.toString("utf8");
+      if (Object.prototype.hasOwnProperty.call(fields, name)) {
+        fields[name] = Array.isArray(fields[name]) ? [...fields[name], text] : [fields[name], text];
+      } else {
+        fields[name] = text;
+      }
+    }
+
+    cursor = next;
+  }
+
+  return { fields, files };
+}
+
+async function readSellIntakePayload(req) {
+  const contentType = String(req.headers["content-type"] || "").toLowerCase();
+  if (contentType.includes("multipart/form-data")) {
+    const body = await collectBuffer(req);
+    const { fields, files } = parseMultipartFormData(req, body);
+    const channels = fields.channels
+      ? (Array.isArray(fields.channels) ? fields.channels : [fields.channels])
+      : [];
+    return {
+      title: fields.title || "",
+      notes: fields.notes || "",
+      sub_brand: fields.sub_brand || "",
+      location_code: fields.location_code || "",
+      qty_confirmed: Number(fields.qty_confirmed || 0),
+      inventory_confidence: Number(fields.inventory_confidence || 1),
+      desired_velocity: fields.desired_velocity || "normal",
+      price_policy: fields.price_policy || "normal",
+      mode: fields.mode || "one_off",
+      preferred_channels: channels.length ? channels : ["ebay"],
+      photos: files
+        .filter((f) => f.field === "photos" && f.buffer.length > 0)
+        .map((f) => ({
+          filename: f.filename,
+          mime_type: f.mime_type,
+          buffer: f.buffer,
+        })),
+    };
+  }
+
+  const raw = await collectBody(req);
+  return raw ? JSON.parse(raw) : {};
 }
 
 function escapeHtml(s) {
@@ -201,6 +332,7 @@ function saveGoogleOAuthEnv({ clientId, clientSecret, redirectUri, refreshToken,
 const oauthStateStore = new Map();
 
 function beginGoogleOAuth(res, cfg) {
+  const google = getGoogleApis();
   const state = crypto.randomBytes(18).toString("hex");
   oauthStateStore.set(state, { ...cfg, createdAt: Date.now() });
   for (const [k, v] of oauthStateStore.entries()) {
@@ -316,7 +448,7 @@ function renderSellDashboard(items = []) {
           <label><input type="checkbox" name="channels" value="facebook_marketplace" /> Facebook Marketplace</label>
         </div>
         <label>Photos (front/back/label/scale preferred)</label>
-        <input id="photos" type="file" multiple accept="image/*" />
+        <input id="photos" name="photos" type="file" multiple accept="image/*" />
         <button type="submit">Create Item + Upload</button>
       </form>
       <p id="status" class="muted"></p>
@@ -333,44 +465,31 @@ function renderSellDashboard(items = []) {
     </div>
   </div>
   <script>
-    async function toDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result);
-        r.onerror = reject;
-        r.readAsDataURL(file);
-      });
-    }
     document.getElementById('sellForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const status = document.getElementById('status');
       status.textContent = 'Uploading...';
       try {
         const form = e.currentTarget;
-        const files = Array.from(document.getElementById('photos').files || []);
+        const formData = new FormData();
+        const values = new FormData(form);
         const channels = Array.from(form.querySelectorAll('input[name="channels"]:checked')).map(x => x.value);
-        const photos = [];
-        for (const f of files) {
-          const dataUrl = await toDataUrl(f);
-          photos.push({ filename: f.name, mime_type: f.type || 'application/octet-stream', data_url: dataUrl });
+        formData.set('title', values.get('title') || '');
+        formData.set('notes', values.get('notes') || '');
+        formData.set('sub_brand', values.get('sub_brand') || '');
+        formData.set('location_code', values.get('location_code') || '');
+        formData.set('qty_confirmed', values.get('qty_confirmed') || '0');
+        formData.set('inventory_confidence', values.get('inventory_confidence') || '1');
+        formData.set('desired_velocity', values.get('desired_velocity') || 'normal');
+        formData.set('price_policy', values.get('price_policy') || 'normal');
+        formData.set('mode', values.get('mode') || 'one_off');
+        for (const channel of (channels.length ? channels : ['ebay'])) formData.append('channels', channel);
+        for (const f of Array.from(document.getElementById('photos').files || [])) {
+          formData.append('photos', f, f.name);
         }
-        const payload = {
-          title: form.title.value || '',
-          notes: form.notes.value || '',
-          sub_brand: form.sub_brand.value || '',
-          location_code: form.location_code.value || '',
-          qty_confirmed: Number(form.qty_confirmed.value || 0),
-          inventory_confidence: Number(form.inventory_confidence.value || 1),
-          desired_velocity: form.desired_velocity.value || 'normal',
-          price_policy: form.price_policy.value || 'normal',
-          mode: form.mode.value || 'one_off',
-          preferred_channels: channels.length ? channels : ['ebay'],
-          photos
-        };
         const res = await fetch('/v1/sell/intake', {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: formData
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'upload_failed');
@@ -480,12 +599,14 @@ async function createSellIntake(payload) {
   let saved = 0;
   for (let i = 0; i < photos.length; i += 1) {
     const p = photos[i] || {};
-    const dataUrl = String(p.data_url || "");
     const mime = String(p.mime_type || "application/octet-stream");
-    const m = dataUrl.match(/^data:(.+);base64,(.+)$/);
-    if (!m) continue;
-    const b64 = m[2];
-    const buf = Buffer.from(b64, "base64");
+    let buf = Buffer.isBuffer(p.buffer) ? p.buffer : null;
+    if (!buf) {
+      const dataUrl = String(p.data_url || "");
+      const m = dataUrl.match(/^data:(.+);base64,(.+)$/);
+      if (!m) continue;
+      buf = Buffer.from(m[2], "base64");
+    }
     if (buf.length > 10 * 1024 * 1024) throw new Error(`photo_too_large:${i + 1}`);
     const sha = crypto.createHash("sha256").update(buf).digest("hex");
     const name = safeFileName(p.filename || `photo-${i + 1}.bin`);
@@ -1137,8 +1258,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && pathname === "/v1/sell/intake") {
-      const raw = await collectBody(req);
-      const body = raw ? JSON.parse(raw) : {};
+      const body = await readSellIntakePayload(req);
       const out = await createSellIntake(body);
       const { rows } = await pg.query(
         `SELECT id, sku, title, notes, desired_velocity, preferred_channels, status, created_at
@@ -1216,6 +1336,7 @@ const server = http.createServer(async (req, res) => {
       oauthStateStore.delete(state);
 
       try {
+        const google = getGoogleApis();
         const oauth2 = new google.auth.OAuth2(cfg.clientId, cfg.clientSecret, cfg.redirectUri);
         const tokenRes = await oauth2.getToken(code);
         const tokens = tokenRes.tokens || {};

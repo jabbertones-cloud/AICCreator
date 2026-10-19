@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aiccreator.local/schemas/aicc-metrics.schema.json",
+  "title": "AICC Metrics",
+  "type": "object",
+  "required": ["variants"],
+  "additionalProperties": true,
+  "properties": {
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["variant_id"],
+        "additionalProperties": true,
+        "properties": {
+          "variant_id": { "type": "string" },
+          "one_sec_hold_pct": { "type": "number", "minimum": 0 },
+          "three_sec_view_pct": { "type": "number", "minimum": 0 },
+          "skip_dropoff_ms": { "type": "number", "minimum": 0 },
+          "avg_watch_sec": { "type": "number", "minimum": 0 },
+          "completion_pct": { "type": "number", "minimum": 0 },
+          "saves": { "type": "number", "minimum": 0 },
+          "shares": { "type": "number", "minimum": 0 },
+          "comments": { "type": "number", "minimum": 0 },
+          "ctr_pct": { "type": "number", "minimum": 0 },
+          "retention_30s_pct": { "type": "number", "minimum": 0 },
+          "impressions": { "type": "number", "minimum": 0 },
+          "clicks": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

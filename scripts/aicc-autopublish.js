@@ -24,6 +24,7 @@ try {
 const ROOT = path.join(__dirname, "..");
 const DATA = path.join(ROOT, "data");
 const REPORTS = path.join(ROOT, "reports");
+const STACK_CONFIG_FILE = path.join(ROOT, "config", "aicc-plushtrap-stack.json");
 const QUEUE_FILE = path.join(DATA, "aicc-publish-queue.json");
 const RESULT_FILE = path.join(REPORTS, "aicc-publish-results-latest.json");
 
@@ -49,6 +50,36 @@ function readJson(file, fallback) {
 function writeJson(file, data) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(data, null, 2));
+}
+
+function variantText(variant) {
+  return [variant?.title, variant?.hook, variant?.body, variant?.cta, variant?.description, ...((variant?.hashtags || []))]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function disclosureCheck(variant) {
+  const config = readJson(STACK_CONFIG_FILE, {});
+  const text = variantText(variant);
+  const lower = text.toLowerCase();
+  const phrases = config?.disclosure?.phrases || ["virtual Plushtrap creator"];
+  const hasDisclosure = phrases.some((p) => lower.includes(String(p).toLowerCase()));
+  const forbidden = (config?.disclosure?.forbidden_claim_patterns || [])
+    .map((p) => new RegExp(p, "i"))
+    .filter((re) => re.test(text))
+    .map((re) => re.source);
+  const failures = [];
+  if (!hasDisclosure) failures.push("missing_virtual_creator_disclosure");
+  for (const pattern of forbidden) failures.push(`forbidden_claim:${pattern}`);
+  return { ok: failures.length === 0, failures };
+}
+
+function platformDisclosureMetadata() {
+  return {
+    is_aigc: true,
+    brand_organic_toggle: true,
+    disclosure: "virtual Plushtrap creator",
+  };
 }
 
 function loadCampaign(file) {
@@ -79,6 +110,7 @@ async function publishYouTube(variant, videoPathOrUrl) {
       platform: "youtube",
       variant,
       video: videoPathOrUrl,
+      aicc_disclosure: platformDisclosureMetadata(),
     });
     return { ok: r.ok, external_id: `yt:webhook:${r.status}`, raw: r.body };
   }
@@ -122,6 +154,7 @@ async function publishInstagram(variant, videoPathOrUrl) {
       platform: "instagram",
       variant,
       video: videoPathOrUrl,
+      aicc_disclosure: platformDisclosureMetadata(),
     });
     return { ok: r.ok, external_id: `ig:webhook:${r.status}`, raw: r.body };
   }
@@ -170,6 +203,7 @@ async function publishTikTok(variant, videoPathOrUrl) {
       platform: "tiktok",
       variant,
       video: videoPathOrUrl,
+      aicc_disclosure: platformDisclosureMetadata(),
     });
     return { ok: r.ok, external_id: `tt:webhook:${r.status}`, raw: r.body };
   }
@@ -197,6 +231,11 @@ async function publishTikTok(variant, videoPathOrUrl) {
     },
   };
 
+  if (process.env.AICC_TIKTOK_SEND_AIGC_FIELDS === "true") {
+    postInfo.post_info.is_aigc = true;
+    postInfo.post_info.brand_organic_toggle = true;
+  }
+
   const res = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
     method: "POST",
     headers: {
@@ -218,6 +257,10 @@ async function dispatch(item, dryRun = false) {
   const payload = item.payload || {};
   const variant = payload.variant;
   const video = payload.video_asset;
+  const gate = disclosureCheck(variant);
+  if (!gate.ok) {
+    return { ok: false, error: `Disclosure gate failed: ${gate.failures.join(",")}` };
+  }
 
   if (dryRun) {
     return { ok: true, external_id: `dry:${item.platform}:${item.id}` };

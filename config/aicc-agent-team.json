@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-03",
+  "default_runtime": {
+    "local_llm": "ollama",
+    "source_of_truth": "notebooklm",
+    "synthesis_checker": "gemini",
+    "repo": "AICCreator",
+    "notebook_id": "8b8519a6-798f-4150-abfd-1f9c5a6e1796"
+  },
+  "model_routes": {
+    "fast_text": {
+      "provider": "ollama",
+      "model": "qwen3:4b-64k",
+      "fallback": "qwen3:4b"
+    },
+    "reasoning": {
+      "provider": "ollama",
+      "model": "qwen3:14b",
+      "fallback": "qwen3:4b-64k"
+    },
+    "coding": {
+      "provider": "ollama",
+      "model": "qwen2.5-coder:7b",
+      "fallback": "qwen3:4b-64k"
+    },
+    "vision": {
+      "provider": "ollama",
+      "model": "llama3.2-vision",
+      "fallback": "moondream"
+    },
+    "synthesis_check": {
+      "provider": "gemini",
+      "model": "cli-default",
+      "fallback": "reasoning"
+    }
+  },
+  "agents": [
+    {
+      "id": "notebook_researcher",
+      "route": "reasoning",
+      "owns": ["source_of_truth", "research_pack", "citations"],
+      "outputs": ["research_brief", "source_ledger_entries", "operator_notes"],
+      "required_gates": ["source_provenance"]
+    },
+    {
+      "id": "trend_scout",
+      "route": "fast_text",
+      "owns": ["hooks", "formats", "trend_backlog"],
+      "outputs": ["trend_cards", "hook_bank"],
+      "required_gates": ["source_provenance"]
+    },
+    {
+      "id": "character_director",
+      "route": "reasoning",
+      "owns": ["virtual_creator_bible", "identity_memory", "style_locks"],
+      "outputs": ["creator_profiles", "identity_prompts", "negative_prompts"],
+      "required_gates": ["identity_consistency", "impersonation_risk"]
+    },
+    {
+      "id": "scriptwriter",
+      "route": "reasoning",
+      "owns": ["hooks", "voiceover", "captions"],
+      "outputs": ["script_variants", "caption_variants", "cta_variants"],
+      "required_gates": ["source_provenance", "disclosure"]
+    },
+    {
+      "id": "shot_planner",
+      "route": "reasoning",
+      "owns": ["shot_lists", "continuity", "broll_prompts"],
+      "outputs": ["storyboard", "first_last_frame_plan", "render_jobs"],
+      "required_gates": ["source_provenance", "render_preflight"]
+    },
+    {
+      "id": "comfyui_workflow_builder",
+      "route": "coding",
+      "owns": ["flux_pulid_lora_workflows", "batch_render_specs"],
+      "outputs": ["workflow_payloads", "node_requirements"],
+      "required_gates": ["workflow_validation"]
+    },
+    {
+      "id": "render_worker",
+      "route": "fast_text",
+      "owns": ["queue_consumption", "local_video", "external_video_hooks"],
+      "outputs": ["render_manifest", "asset_paths"],
+      "required_gates": ["render_preflight", "cost_control"]
+    },
+    {
+      "id": "remotion_editor",
+      "route": "coding",
+      "owns": ["assembly", "captions", "templates", "exports"],
+      "outputs": ["edit_manifest", "final_video_paths"],
+      "required_gates": ["render_assets", "caption_fit"]
+    },
+    {
+      "id": "qa_judge",
+      "route": "reasoning",
+      "owns": ["quality_gate", "legal_gate", "provenance_gate"],
+      "outputs": ["qa_report", "pass_fail", "fix_list"],
+      "required_gates": ["source_provenance", "disclosure", "platform_safety"]
+    },
+    {
+      "id": "publisher",
+      "route": "fast_text",
+      "owns": ["draft_queue", "platform_metadata", "posting_windows"],
+      "outputs": ["publish_queue", "draft_manifests"],
+      "required_gates": ["disclosure", "platform_safety", "human_approval"]
+    },
+    {
+      "id": "metrics_learner",
+      "route": "reasoning",
+      "owns": ["retention", "watch_time", "feedback_loop"],
+      "outputs": ["learning_report", "next_batch_mutations"],
+      "required_gates": ["metrics_schema"]
+    },
+    {
+      "id": "ops_sre",
+      "route": "coding",
+      "owns": ["m3_runtime", "pm2", "health_checks", "cost_controls"],
+      "outputs": ["health_report", "runtime_env"],
+      "required_gates": ["stack_preflight"]
+    }
+  ]
+}

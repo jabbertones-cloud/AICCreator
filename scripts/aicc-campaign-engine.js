@@ -58,6 +58,50 @@ const NICHE_PACKS = {
     ],
     affiliateCta: "Use code CREATOR for partner-tool discount in bio.",
   },
+  /**
+   * Kickstarter + dietary supplement / wellness — hooks and body avoid disease claims,
+   * alcohol “recovery,” and symptom relief (align with campaign Trust & Safety review).
+   * Use a short {topic} e.g. "Chaser" or "Somavéa Chaser".
+   */
+  "kickstarter-wellness": {
+    angle: "lifestyle morning readiness",
+    hookTemplates: [
+      "Tomorrow still matters — {topic} is about showing up, not fixing.",
+      "Flights, events, real life — {topic} for preparation and morning readiness.",
+      "Lifestyle supplement: {topic} for system support and general wellness.",
+      "We’re bringing {topic} to Kickstarter — here’s what makes it different.",
+      "Peer-not-preachy wellness: {topic} and the morning you want to keep.",
+    ],
+    ctaTemplates: [
+      "Link in bio — waitlist + launch alerts.",
+      "Follow for Kickstarter date and backer tiers.",
+      "Save this — campaign drops soon.",
+      "Notify me: link in bio for updates.",
+      "Questions? FAQ on the pre-launch page — link in bio.",
+    ],
+    affiliateCta: "Official site + Supplement Facts in bio. FDA disclaimer applies.",
+    hashtagBase: ["#Wellness", "#Kickstarter", "#MorningRoutine", "#Lifestyle", "#Supplement"],
+    bodyVariants: [
+      [
+        "Story: {topic} is for people who want momentum when the calendar doesn’t pause.",
+        "Frame: morning readiness + lifestyle preparation — general wellness, not treating a condition.",
+        "Proof: focused formula, quality standards, transparent rewards and shipping on the campaign page.",
+        "Ask: join the list — we’ll announce when backers can choose a tier.",
+      ],
+      [
+        "Hook body: where {topic} fits — travel, celebrations, nights you don’t want to trade for tomorrow.",
+        "Compliance: statements not evaluated by FDA; product not intended to diagnose, treat, cure, or prevent disease.",
+        "Creative: lead with morning contrast and real occasions — not clinical before/after.",
+        "CTA: save + follow so you don’t miss the launch window.",
+      ],
+      [
+        "Differentiator: {topic} — preparation beats perfection; no moralizing the night.",
+        "Trust: fulfillment regions, caps, and supplement labeling spelled out in Story + FAQ.",
+        "Short video: keep first moments morning-forward; product education after the hook lands.",
+        "Next step: link in bio for waitlist and updates.",
+      ],
+    ],
+  },
 };
 
 function arg(flag, fallback = null) {
@@ -144,11 +188,32 @@ function scenePlan(variant, durationSec, keywords) {
   };
 }
 
-function hashTags(topic, niche) {
-  const base = ["#AI", "#ContentCreator", "#ShortForm", "#Growth", "#Automation"];
+function hashTags(topic, niche, pack) {
+  const base =
+    Array.isArray(pack?.hashtagBase) && pack.hashtagBase.length
+      ? [...pack.hashtagBase]
+      : ["#AI", "#ContentCreator", "#ShortForm", "#Growth", "#Automation"];
   const topicTag = "#" + String(topic || "AICC").replace(/[^a-z0-9]/gi, "").slice(0, 18);
   const nicheTag = "#" + String(niche || "niche").replace(/[^a-z0-9]/gi, "").slice(0, 18);
   return [...new Set([...base, topicTag, nicheTag])].slice(0, 8);
+}
+
+function defaultBody(topic) {
+  return [
+    `Problem: creators waste time on disconnected tooling for ${topic}.`,
+    `System: one pipeline from research -> script -> scene plan -> video -> publish.`,
+    `Proof: use beat-timed sections, b-roll keyword mapping, and retention-first structure.`,
+    `Execution: ship variants, track CTR/retention, auto-promote the winner.`,
+  ].join(" ");
+}
+
+function variantBody(pack, topic, variantIndex) {
+  const variants = pack.bodyVariants;
+  if (Array.isArray(variants) && variants.length) {
+    const lines = variants[variantIndex % variants.length];
+    return lines.map((line) => line.replace(/\{topic\}/g, topic)).join(" ");
+  }
+  return defaultBody(topic);
 }
 
 function main() {
@@ -173,14 +238,9 @@ function main() {
 
   const variants = [];
   for (let i = 0; i < variantsCount; i++) {
-    const hook = pack.hookTemplates[i % pack.hookTemplates.length].replace("{topic}", topic);
+    const hook = pack.hookTemplates[i % pack.hookTemplates.length].replace(/\{topic\}/g, topic);
     const cta = pack.ctaTemplates[i % pack.ctaTemplates.length];
-    const body = [
-      `Problem: creators waste time on disconnected tooling for ${topic}.`,
-      `System: one pipeline from research -> script -> scene plan -> video -> publish.`,
-      `Proof: use beat-timed sections, b-roll keyword mapping, and retention-first structure.`,
-      `Execution: ship variants, track CTR/retention, auto-promote the winner.`,
-    ].join(" ");
+    const body = variantBody(pack, topic, i);
 
     const title = `${hook.split(".")[0]} | ${pack.angle}`.slice(0, 100);
     const description = [
@@ -199,7 +259,7 @@ function main() {
       cta,
       title,
       description,
-      hashtags: hashTags(topic, niche),
+      hashtags: hashTags(topic, niche, pack),
       thumbnail_prompt: `High contrast thumbnail about ${topic}, bold 3-word hook, red/yellow accents, no clutter`,
       affiliate_cta_block: pack.affiliateCta,
       voice: {

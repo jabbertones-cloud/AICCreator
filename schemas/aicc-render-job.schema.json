@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aiccreator.local/schemas/aicc-render-job.schema.json",
+  "title": "AICC Render Job",
+  "type": "object",
+  "required": ["id", "created_at", "status", "provider", "shot_type", "prompt"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "submitted", "rendering", "ready_for_qa", "failed", "approved", "published"]
+    },
+    "provider": {
+      "type": "string",
+      "enum": ["comfyui", "kie_kling", "muapi_kling", "muapi_veo", "remotion", "ffmpeg", "manual"]
+    },
+    "shot_type": {
+      "type": "string",
+      "enum": ["local_product_reference", "human_motion", "cinematic_environment", "final_assembly", "manual"]
+    },
+    "prompt": { "type": "string" },
+    "workflow_path": { "type": "string" },
+    "reference_assets": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "external_prompt_id": { "type": "string" },
+    "preflight": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "error": { "type": "string" }
+  }
+}

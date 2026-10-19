@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-03",
+  "brand": "Plushtrap",
+  "notebook_id": "8b8519a6-798f-4150-abfd-1f9c5a6e1796",
+  "disclosure": {
+    "required": true,
+    "phrases": [
+      "virtual Plushtrap creator",
+      "virtual Plushtrap creative director",
+      "AI-assisted Plushtrap story",
+      "AI-assisted virtual creator"
+    ],
+    "forbidden_claim_patterns": [
+      "\\breal customer\\b",
+      "\\breal factory visit\\b",
+      "\\bofficial partner\\b",
+      "\\bcelebrity endorsed\\b",
+      "\\bguaranteed\\b"
+    ]
+  },
+  "render_router": {
+    "local_product_reference": {
+      "provider": "comfyui",
+      "requires": ["product_ref", "workflow_json"],
+      "fallback": "remotion_still_motion"
+    },
+    "human_motion": {
+      "provider": "kie_kling",
+      "requires": ["identity_ref", "preflight_payload", "credits_checked"],
+      "fallback": "muapi_kling"
+    },
+    "cinematic_environment": {
+      "provider": "muapi_veo",
+      "requires": ["shot_prompt", "estimated_cost"],
+      "fallback": "comfyui_wan"
+    },
+    "final_assembly": {
+      "provider": "remotion",
+      "requires": ["clips", "captions", "disclosure"],
+      "fallback": "ffmpeg"
+    }
+  },
+  "quality_gates": {
+    "source_provenance": ["verified_external", "notebook_sot", "local_asset"],
+    "identity_consistency_min": 0.8,
+    "cost_max_usd_per_batch": 25,
+    "publish_requires_human_approval": true,
+    "publish_requires_disclosure": true
+  },
+  "metrics": {
+    "required_fields": [
+      "variant_id",
+      "one_sec_hold_pct",
+      "three_sec_view_pct",
+      "skip_dropoff_ms",
+      "avg_watch_sec",
+      "completion_pct",
+      "saves",
+      "shares",
+      "comments",
+      "ctr_pct"
+    ]
+  }
+}

@@ -41,7 +41,18 @@ function scoreMetricSet(metric) {
   const retention = normalizeMetric(metric, "retention_30s_pct");
   const ctr = normalizeMetric(metric, "ctr_pct");
   const watch = normalizeMetric(metric, "avg_watch_sec");
-  return retention * 0.5 + ctr * 0.3 + watch * 0.2;
+  const oneSecHold = normalizeMetric(metric, "one_sec_hold_pct");
+  const threeSecView = normalizeMetric(metric, "three_sec_view_pct");
+  const completion = normalizeMetric(metric, "completion_pct");
+  const saves = normalizeMetric(metric, "saves");
+  const shares = normalizeMetric(metric, "shares");
+  const comments = normalizeMetric(metric, "comments");
+  const skipDropoffMs = normalizeMetric(metric, "skip_dropoff_ms");
+  const engagement = Math.min(100, saves * 0.5 + shares * 0.8 + comments * 0.7);
+  const hookHold = oneSecHold || threeSecView ? oneSecHold * 0.25 + threeSecView * 0.35 : retention * 0.4;
+  const completionScore = completion || retention;
+  const dropoffScore = Math.min(100, skipDropoffMs / 30);
+  return hookHold + completionScore * 0.2 + ctr * 0.15 + watch * 0.08 + engagement * 0.08 + dropoffScore * 0.04;
 }
 
 function main() {
@@ -67,6 +78,13 @@ function main() {
       title: v.title,
       niche_pack: v.niche_pack,
       score,
+      one_sec_hold_pct: normalizeMetric(m, "one_sec_hold_pct"),
+      three_sec_view_pct: normalizeMetric(m, "three_sec_view_pct"),
+      skip_dropoff_ms: normalizeMetric(m, "skip_dropoff_ms"),
+      completion_pct: normalizeMetric(m, "completion_pct"),
+      saves: normalizeMetric(m, "saves"),
+      shares: normalizeMetric(m, "shares"),
+      comments: normalizeMetric(m, "comments"),
       retention_30s_pct: normalizeMetric(m, "retention_30s_pct"),
       ctr_pct: normalizeMetric(m, "ctr_pct"),
       avg_watch_sec: normalizeMetric(m, "avg_watch_sec"),

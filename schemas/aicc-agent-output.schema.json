@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aiccreator.local/schemas/aicc-agent-output.schema.json",
+  "title": "AICC Agent Output",
+  "type": "object",
+  "required": ["agent_id", "generated_at", "status", "outputs", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pass", "needs_review", "failed"]
+    },
+    "outputs": {
+      "type": "object"
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "fail", "warn"] },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "verification_status"],
+        "additionalProperties": false,
+        "properties": {
+          "source_id": { "type": "string" },
+          "verification_status": {
+            "type": "string",
+            "enum": ["verified_external", "notebook_sot", "local_asset", "operator_assumption", "rejected"]
+          },
+          "url_or_path": { "type": "string" },
+          "claim": { "type": "string" }
+        }
+      }
+    }
+  }
+}
