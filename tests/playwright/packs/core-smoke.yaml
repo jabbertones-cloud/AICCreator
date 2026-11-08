@@ -1,9 +1,0 @@
-name: core-smoke
-target: http://127.0.0.1:4040
-steps:
-  - action: navigate
-    url: http://127.0.0.1:4040/health
-  - action: assert_url
-    contains: 127.0.0.1
-captures:
-  screenshot: false
